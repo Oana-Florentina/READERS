@@ -1,0 +1,88 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: licenta-db
+    ports:
+     - 5432:5432
+    environment:
+      POSTGRES_DB: licenta-db
+      POSTGRES_USER: licenta
+      POSTGRES_PASSWORD: licenta
+    networks:
+      - db_conn
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U licenta -d licenta-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  user-db:
+    image: postgres:latest
+    container_name: licenta-user-db
+    ports:
+     - 5433:5432
+    environment:
+      POSTGRES_DB: licenta-user-db
+      POSTGRES_USER: licenta
+      POSTGRES_PASSWORD: licenta
+    networks:
+      - db_conn
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U licenta -d licenta-user-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  migrator:
+    build:
+      context: ./
+      dockerfile: ./Lunatic.Migrator.Dockerfile
+    container_name: lunatic-migrator
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    networks:
+      - db_conn
+    depends_on:
+      db:
+        condition: service_healthy
+      user-db:
+        condition: service_healthy
+  api:
+    build:
+      context: ./
+      dockerfile: ./Lunatic.API.Dockerfile
+    container_name: lunatic-api
+    ports:
+      - 8080:8080
+    networks:
+      - db_conn
+      - api_conn
+    depends_on:
+      db:
+        condition: service_healthy
+      user-db:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/test"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  ui:
+    build:
+      context: ./
+      dockerfile: ./Lunatic.UI.Dockerfile
+    container_name: lunatic-ui
+    ports:
+      - 9090:9090
+    networks:
+      - api_conn
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  db_conn:
+    driver: bridge
+  api_conn:
+    driver: bridge
+
