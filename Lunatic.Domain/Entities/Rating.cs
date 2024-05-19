@@ -11,10 +11,10 @@ namespace Lunatic.Domain.Entities
             Score = score;
             CommentMessage = commentMessage;   
         }
-        public Guid RatingId { get; set; }
-        public Guid BookId { get; set; }
-        public Guid UserId { get; set; }
-        public float Score { get; set; }
-        public string CommentMessage { get; set; }
+        public Guid RatingId { get; private set; }
+        public Guid BookId { get; private set; }
+        public Guid UserId { get; private set; }
+        public float Score { get; private set; }
+        public string CommentMessage { get; private set; }
     }
 }
