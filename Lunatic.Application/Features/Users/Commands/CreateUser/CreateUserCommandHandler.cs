@@ -5,15 +5,19 @@ using Lunatic.Application.Features.Users.Payload;
 using MediatR;
 
 
-namespace Lunatic.Application.Features.Users.Commands.CreateUser {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResponse> {
+namespace Lunatic.Application.Features.Users.Commands.CreateUser
+{
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, CreateUserCommandResponse>
+    {
         private readonly IUserRepository userRepository;
 
-        public CreateUserCommandHandler(IUserRepository userRepository) {
+        public CreateUserCommandHandler(IUserRepository userRepository) 
+        {
             this.userRepository = userRepository;
         }
 
-        public async Task<CreateUserCommandResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken) {
+        public async Task<CreateUserCommandResponse> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        {
             var validator = new CreateUserCommandValidator(this.userRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -24,7 +28,7 @@ namespace Lunatic.Application.Features.Users.Commands.CreateUser {
                 };
             }
 
-            var user = User.Create(request.FirstName, request.LastName, request.Email, request.Username, request.Password, request.Role).Value;
+            var user = new User(request.FirstName, request.LastName, request.Email, request.Username, request.Password, request.Role);
 
             await this.userRepository.AddAsync(user);
 
@@ -39,7 +43,6 @@ namespace Lunatic.Application.Features.Users.Commands.CreateUser {
                     Username = user.Username,
                     Role = user.Role,
 
-                    TeamIds = user.TeamIds
                 }
             };
         }

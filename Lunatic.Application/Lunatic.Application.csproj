@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -16,10 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lunatic.Domain\Lunatic.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Books\Commands\" />
   </ItemGroup>
 
 </Project>

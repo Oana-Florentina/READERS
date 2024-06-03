@@ -44,18 +44,12 @@ namespace Lunatic.Identity.Services {
                 };
             }
 
-            var userDb = User.Create(model.FirstName, model.LastName, model.Email, model.Username, model.Password, Role.USER);
-            if(!userDb.IsSuccess) {
-                return new RegisterResponse {
-                    Success = false,
-                    ValidationErrors = new List<string> { "Can't create a user" }
-                };
-            }
+            var userDb = new User(model.FirstName, model.LastName, model.Email, model.Username, model.Password, Role.USER);
 
             ApplicationUser user = new ApplicationUser() {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                Id = userDb.Value.UserId.ToString(),
+                Id = userDb.UserId.ToString(),
                 UserName = model.Username,
             };
 
@@ -75,7 +69,7 @@ namespace Lunatic.Identity.Services {
                 await userManager.AddToRoleAsync(user, role);
             }
 
-            await this.userRepository.AddAsync(userDb.Value);
+            await this.userRepository.AddAsync(userDb);
 
             return new RegisterResponse {
                 Success = true,

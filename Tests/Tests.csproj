@@ -40,4 +40,9 @@
     <ProjectReference Include="..\Lunatic.API\Lunatic.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Lunatic.API\Controllers\" />
+    <Folder Include="Lunatic.Application\" />
+  </ItemGroup>
+
 </Project>

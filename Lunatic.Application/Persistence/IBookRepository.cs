@@ -9,5 +9,6 @@ namespace Lunatic.Application.Persistence
 {
     public interface IBookRepository : IAsyncRepository<Book>
     {
+      
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Lunatic.Application.Features.Books.Payload;
 using Lunatic.Application.Features.Books.Queries.GetAll;
+using Lunatic.Application.Features.Books.Mapper;
 using Lunatic.Application.Persistence;
+using Lunatic.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -26,15 +28,7 @@ namespace Lunatic.Application.Features.Books.Queries.GetAll
 
             if (books.IsSuccess)
             {
-                response.Books = books.Value.Select(book => new BookDto
-                {
-                    BookId = book.BookId,
-                    Title = book.Title,
-                    Author = book.Author,
-                    Genre = book.Genre,
-                    Description = book.Description,
-                    Year = book.Year,
-                }).ToList();
+                response.Books = books.Value.Select(book => BookMapper.MapToBookDto(book)).ToList();
             }
             return response;
         }

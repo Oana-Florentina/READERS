@@ -2,6 +2,7 @@
 using Lunatic.Application.Persistence;
 using Lunatic.Application.Features.Users.Payload;
 using MediatR;
+using Lunatic.Application.Features.Users.Mapper;
 
 
 namespace Lunatic.Application.Features.Users.Queries.GetById {
@@ -23,17 +24,7 @@ namespace Lunatic.Application.Features.Users.Queries.GetById {
 
             return new GetByIdUserQueryResponse { 
                 Success = true,
-                User = new UserDto {
-                    UserId = userResult.Value.UserId,
-
-                    FirstName = userResult.Value.FirstName,
-                    LastName = userResult.Value.LastName,
-                    Email = userResult.Value.Email,
-                    Username = userResult.Value.Username,
-                    Role = userResult.Value.Role,
-
-                    TeamIds = userResult.Value.TeamIds
-                }
+                User = UserMapper.MapToUserDto(userResult.Value)
             };
         }
     }
