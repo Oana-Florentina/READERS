@@ -23,6 +23,7 @@ namespace Lunatic.Infrastructure {
 			services.AddScoped<IProjectRepository, ProjectRepository>();
 			services.AddScoped<ITeamRepository, TeamRepository>();
             services.AddScoped<IReaderRepository, ReaderRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEmailService, EmailService>();

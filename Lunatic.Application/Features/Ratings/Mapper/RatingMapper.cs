@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Lunatic.Application.Features.Ratings.Payload;
+using Lunatic.Domain.Entities;
 
 namespace Lunatic.Application.Features.Ratings.Mapper
 {
-    internal class RatingMapper
+    public class RatingMapper
     {
+
+        public static RatingDto MapToRatingDto(Rating rating)
+        {
+            return new RatingDto
+            {
+               
+
+            };
+        }
     }
 }
