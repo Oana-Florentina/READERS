@@ -10,6 +10,7 @@ namespace Lunatic.Infrastructure {
         public DbSet<Team> Teams { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Reader> Readers { get; set; }
 
         // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
         //     optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=LunaticDB;User Id=lunatic;Password=lunatic");

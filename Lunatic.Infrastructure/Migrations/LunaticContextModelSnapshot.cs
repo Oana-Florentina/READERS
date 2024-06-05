@@ -98,6 +98,35 @@ namespace Lunatic.Infrastructure.Migrations
                     b.ToTable("Projects");
                 });
 
+            modelBuilder.Entity("Lunatic.Domain.Entities.Reader", b =>
+                {
+                    b.Property<Guid>("ReaderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsFavorite")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("RatingId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ReaderId");
+
+                    b.ToTable("Readers");
+                });
+
             modelBuilder.Entity("Lunatic.Domain.Entities.Team", b =>
                 {
                     b.Property<Guid>("TeamId")

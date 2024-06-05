@@ -18,4 +18,10 @@
     <ProjectReference Include="..\Lunatic.Domain\Lunatic.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Readers\Commands\DeleteReader\" />
+    <Folder Include="Features\Readers\Commands\UpdateReader\" />
+    <Folder Include="Features\Readers\Queries\" />
+  </ItemGroup>
+
 </Project>

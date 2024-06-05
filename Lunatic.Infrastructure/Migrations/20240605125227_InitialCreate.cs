@@ -50,6 +50,23 @@ namespace Lunatic.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Readers",
+                columns: table => new
+                {
+                    ReaderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    RatingId = table.Column<Guid>(type: "uuid", nullable: false),
+                    IsFavorite = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Readers", x => x.ReaderId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Teams",
                 columns: table => new
                 {
@@ -99,6 +116,9 @@ namespace Lunatic.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Readers");
 
             migrationBuilder.DropTable(
                 name: "Teams");
