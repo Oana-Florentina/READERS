@@ -1,4 +1,7 @@
 ﻿using Lunatic.Application.Features.Readers.Commands.CreateReader;
+using Lunatic.Application.Features.Readers.Commands.DeleteReader;
+using Lunatic.Application.Features.Readers.Commands.UpdateReader;
+using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lunatic.API.Controllers
@@ -11,6 +14,48 @@ namespace Lunatic.API.Controllers
         [ProducesResponseType<CreateReaderCommandResponse>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(CreateReaderCommand command)
         {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        //delete
+
+        [HttpDelete("{readerId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<DeleteReaderCommandResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<DeleteReaderCommandResponse>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(Guid readerId)
+        {
+            var deleteReaderCommand = new DeleteReaderCommand() { ReaderId = readerId };
+            var result = await Mediator.Send(deleteReaderCommand);
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
+
+        //update
+
+        [HttpPut("{readerId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<UpdateReaderCommandResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<UpdateReaderCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(Guid readerId, UpdateReaderCommand command)
+        {
+            if (readerId != command.ReaderId)
+            {
+                return BadRequest(new UpdateReaderCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The reader Id Path and reader Id Body must be equal." }
+                });
+            }
+
             var result = await Mediator.Send(command);
             if (!result.Success)
             {

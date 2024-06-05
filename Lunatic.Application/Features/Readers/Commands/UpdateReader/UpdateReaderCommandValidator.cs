@@ -1,18 +1,19 @@
 ﻿
-using Lunatic.Application.Persistence;
 using FluentValidation;
+using Lunatic.Application.Features.Readers.Commands.UpdateReader;
+using Lunatic.Application.Persistence;
 
 
-namespace Lunatic.Application.Features.Readers.Commands.CreateReader
+namespace Lunatic.Application.Features.Readers.Commands.UpdateReader
 {
-    internal class CreateReaderCommandValidator : AbstractValidator<CreateReaderCommand>
+    internal class UpdateReaderCommandValidator : AbstractValidator<UpdateReaderCommand>
     {
         private readonly IReaderRepository readerRepository;
         private readonly IBookRepository bookRepository;
         private readonly IUserRepository userRepository;
 
 
-        public CreateReaderCommandValidator(IReaderRepository readerRepository, IBookRepository bookRepository, IUserRepository userRepository)
+        public UpdateReaderCommandValidator(IReaderRepository readerRepository, IBookRepository bookRepository, IUserRepository userRepository)
         {
             this.readerRepository = readerRepository;
             this.bookRepository = bookRepository;
@@ -38,9 +39,9 @@ namespace Lunatic.Application.Features.Readers.Commands.CreateReader
                 .NotNull().WithMessage("{PropertyName} is required.")
                 .LessThan(request => request.EndDate).WithMessage("{PropertyName} must be less than EndDate.")
                 .LessThan(dateTime).WithMessage("{PropertyName} must be less than current date.");
-                
 
-            
+
+
 
             RuleFor(request => request.EndDate)
                 .NotEmpty().WithMessage("{PropertyName} is required.")

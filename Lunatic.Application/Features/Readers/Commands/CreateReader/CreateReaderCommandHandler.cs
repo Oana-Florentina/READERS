@@ -15,15 +15,19 @@ namespace Lunatic.Application.Features.Readers.Commands.CreateReader
     public class CreateReaderCommandHandler : IRequestHandler<CreateReaderCommand, CreateReaderCommandResponse>
     {
         private readonly IReaderRepository readerRepository;
+        private readonly IBookRepository bookRepository;
+        private readonly IUserRepository userRepository;
 
-        public CreateReaderCommandHandler(IReaderRepository readerRepository)
+        public CreateReaderCommandHandler(IReaderRepository readerRepository, IBookRepository bookRepository, IUserRepository userRepository)
         {
             this.readerRepository = readerRepository;
+            this.bookRepository = bookRepository;
+            this.userRepository = userRepository;
         }
 
         public async Task<CreateReaderCommandResponse> Handle(CreateReaderCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateReaderCommandValidator(this.readerRepository);
+            var validator = new CreateReaderCommandValidator(this.readerRepository, this.bookRepository, this.userRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validatorResult.IsValid)
