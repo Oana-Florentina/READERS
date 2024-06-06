@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Lunatic.Application.Responses;
+using Lunatic.Application.Features.Ratings.Payload;
+
 
 namespace Lunatic.Application.Features.Ratings.Commands.CreateRating
 {
-    internal class CreateRatingCommandResponse
+    public class CreateRatingCommandResponse : ResponseBase
     {
+        public CreateRatingCommandResponse() : base() { }
+
+        public RatingDto Rating { get; set; } = default!;
     }
 }

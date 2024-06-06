@@ -50,6 +50,21 @@ namespace Lunatic.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Rating",
+                columns: table => new
+                {
+                    RatingId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Score = table.Column<float>(type: "real", nullable: false),
+                    CommentMessage = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rating", x => x.RatingId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Readers",
                 columns: table => new
                 {
@@ -116,6 +131,9 @@ namespace Lunatic.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Projects");
+
+            migrationBuilder.DropTable(
+                name: "Rating");
 
             migrationBuilder.DropTable(
                 name: "Readers");

@@ -10,7 +10,12 @@ namespace Lunatic.Application.Features.Ratings.Mapper
         {
             return new RatingDto
             {
-               
+               RatingId = rating.RatingId,
+               BookId = rating.BookId,
+               UserId = rating.UserId,
+               Score = rating.Score,
+               CommentMessage = rating.CommentMessage
+
 
             };
         }
