@@ -1,5 +1,7 @@
 ﻿using Lunatic.Application.Features.Ratings.Commands.CreateRating;
 using Lunatic.Application.Features.Ratings.Commands.DeleteRating;
+using Lunatic.Application.Features.Ratings.Commands.UpdateRating;
+using Lunatic.Application.Features.Readers.Commands.UpdateReader;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lunatic.API.Controllers
@@ -58,6 +60,29 @@ namespace Lunatic.API.Controllers
             if (!result.Success)
             {
                 return NotFound(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpPut("{ratingId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<UpdateRatingCommandResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<UpdateRatingCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(Guid ratingId, UpdateRatingCommand command)
+        {
+            if (ratingId != command.RatingId)
+            {
+                return BadRequest(new UpdateRatingCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The rating Id Path and rating Id Id Body must be equal." }
+                });
+            }
+
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
             }
             return Ok(result);
         }
