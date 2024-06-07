@@ -1,6 +1,8 @@
+using Lunatic.Application.Features.Readers.Queries.GetAll;
 using Lunatic.Application.Features.Users.Commands.CreateUser;
 using Lunatic.Application.Features.Users.Commands.DeleteUser;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
+using Lunatic.Application.Features.Users.Queries.GetAll;
 using Lunatic.Application.Features.Users.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,7 +64,16 @@ namespace Lunatic.API.Controllers {
 			return Ok(result);
 		}
 
-		
-	}
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType<GetAllUsersQueryResponse>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await Mediator.Send(new GetAllUsersQuery());
+            return Ok(result);
+        }
+
+
+    }
 }
 
