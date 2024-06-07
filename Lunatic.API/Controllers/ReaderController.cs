@@ -1,6 +1,8 @@
-﻿using Lunatic.Application.Features.Readers.Commands.CreateReader;
+﻿using Lunatic.Application.Features.Ratings.Queries.GetAll;
+using Lunatic.Application.Features.Readers.Commands.CreateReader;
 using Lunatic.Application.Features.Readers.Commands.DeleteReader;
 using Lunatic.Application.Features.Readers.Commands.UpdateReader;
+using Lunatic.Application.Features.Readers.Queries.GetAll;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Microsoft.AspNetCore.Mvc;
 
@@ -63,5 +65,15 @@ namespace Lunatic.API.Controllers
             }
             return Ok(result);
         }
+
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType<GetAllReadersQueryResponse>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await Mediator.Send(new GetAllReadersQuery());
+            return Ok(result);
+        }
+
     }
 }

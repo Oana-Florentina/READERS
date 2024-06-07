@@ -18,9 +18,4 @@
     <ProjectReference Include="..\Lunatic.Domain\Lunatic.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Ratings\Queries\" />
-    <Folder Include="Features\Readers\Queries\" />
-  </ItemGroup>
-
 </Project>

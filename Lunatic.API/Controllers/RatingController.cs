@@ -1,6 +1,7 @@
 ﻿using Lunatic.Application.Features.Ratings.Commands.CreateRating;
 using Lunatic.Application.Features.Ratings.Commands.DeleteRating;
 using Lunatic.Application.Features.Ratings.Commands.UpdateRating;
+using Lunatic.Application.Features.Ratings.Queries.GetAll;
 using Lunatic.Application.Features.Readers.Commands.UpdateReader;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,14 +11,14 @@ namespace Lunatic.API.Controllers
     {
 
 
-        /* [HttpGet]
-         [Produces("application/json")]
-         [ProducesResponseType<GetAllBooksQueryResponse>(StatusCodes.Status200OK)]
-         public async Task<IActionResult> GetAll()
-         {
-             var result = await Mediator.Send(new GetAllBooksQuery());
-             return Ok(result);
-         }*/
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType<GetAllRatingsQueryResponse>(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await Mediator.Send(new GetAllRatingsQuery());
+            return Ok(result);
+        }
 
 
         //create a new Rating
