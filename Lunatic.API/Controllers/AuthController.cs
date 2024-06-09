@@ -4,7 +4,8 @@ using Lunatic.Identity.Models;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace Lunatic.API.Controllers {
+namespace Lunatic.API.Controllers
+{
     [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase {
