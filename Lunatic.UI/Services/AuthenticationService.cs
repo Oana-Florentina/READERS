@@ -17,7 +17,7 @@ namespace GloboTicket.TicketManagement.App.Services
 
         public async Task Login(LoginViewModel loginRequest)
         {
-            var response = await httpClient.PostAsJsonAsync("api/v1/authentication/login", loginRequest);
+            var response = await httpClient.PostAsJsonAsync("api/v1/auth/login", loginRequest);
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 throw new Exception(await response.Content.ReadAsStringAsync());
@@ -30,13 +30,13 @@ namespace GloboTicket.TicketManagement.App.Services
         public async Task Logout()
         {
             await tokenService.RemoveTokenAsync();
-            var result = await httpClient.PostAsync("api/v1/authentication/logout", null);
+            var result = await httpClient.PostAsync("api/v1/auth/logout", null);
             result.EnsureSuccessStatusCode();
         }
 
         public async Task Register(RegisterViewModel registerRequest)
         {
-            var result = await httpClient.PostAsJsonAsync("api/v1/authentication/register", registerRequest);
+            var result = await httpClient.PostAsJsonAsync("api/v1/auth/register", registerRequest);
             if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 throw new Exception(await result.Content.ReadAsStringAsync());

@@ -1,0 +1,67 @@
+﻿@page "/register"
+@using Lunatic.UI.Auth
+@using Lunatic.UI.ViewModels
+@inject NavigationManager navigationManager
+@inject CustomStateProvider authStateProvider
+
+<h1 class="h2 font-weight-normal register-title">
+    Register
+</h1>
+
+<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
+    <DataAnnotationsValidator />
+    <label for="inputFirstName" class="sr-only">FirstName</label>
+    <InputText id="inputFirstName" class="form-control" @bind-Value="registerRequest.FirstName" autofocus placeholder="FirstName" />
+    <ValidationMessage For="@(() => registerRequest.FirstName)" />
+
+    <label for="inputLastName" class="sr-only">LastName</label>
+        <InputText id="inputLastName" class="form-control" @bind-Value="registerRequest.LastName" autofocus placeholder="LastName" />
+    <ValidationMessage For="@(() => registerRequest.LastName)" />
+
+    <label for="inputEmail" class="sr-only">Email</label>
+        <InputText id="inputEmail" class="form-control" @bind-Value="registerRequest.Email" autofocus placeholder="Email" />
+    <ValidationMessage For="@(() => registerRequest.Email)" />
+    
+
+    <label for="inputUsername" class="sr-only">Username</label>
+    <InputText id="inputUsername" class="form-control" @bind-Value="registerRequest.Username" autofocus placeholder="Username" />
+    <ValidationMessage For="@(() => registerRequest.Username)" />
+
+    <label for="inputPassword" class="sr-only">Password</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
+    <ValidationMessage For="@(() => registerRequest.Password)" />
+
+    <label for="inputPassword" class="sr-only">Confirm Password</label>
+    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.ConfirmPassword" />
+    <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+
+
+    <br />
+
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+
+    <label class="text-danger">@error</label>
+
+    <NavLink href="login">
+        <h6 class="font-weight-normal text-center">Already have an account</h6>
+    </NavLink>
+</EditForm>
+
+@code {
+    RegisterViewModel registerRequest { get; set; } = new RegisterViewModel();
+    string error { get; set; }
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerRequest);
+            navigationManager.NavigateTo("/");
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+    }
+}
