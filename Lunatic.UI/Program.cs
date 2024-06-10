@@ -29,10 +29,10 @@ builder.Services.AddBlazoredLocalStorage(config =>
 });
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<CustomStateProvider>();
-/*builder.Services.AddHttpClient<ICategoryDataService, CategoryDataService>(client =>
+builder.Services.AddHttpClient<IBookDataService, BookDataService>(client =>
 {
-	client.BaseAddress = new Uri("https://localhost:5076/");
-});*/
+	client.BaseAddress = new Uri("http://localhost:5012/");
+});
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
 {

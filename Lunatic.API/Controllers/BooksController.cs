@@ -16,7 +16,7 @@ namespace Lunatic.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await Mediator.Send(new GetAllBooksQuery());
-            return Ok(result);
+            return Ok(result.Books);
         }
 
         //create a new book

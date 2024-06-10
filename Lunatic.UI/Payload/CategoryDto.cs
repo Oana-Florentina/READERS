@@ -1,4 +1,4 @@
-﻿namespace Lunatic.UI.ViewModels
+﻿namespace Lunatic.UI.Payload
 {
     public class CategoryDto
     {

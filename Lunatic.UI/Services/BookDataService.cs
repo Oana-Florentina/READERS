@@ -8,30 +8,30 @@ using System.Text.Json;
 
 namespace Lunatic.UI.Services
 {
-    public class CategoryDataService : ICategoryDataService
+    public class BookDataService : IBookDataService
     {
-        private const string RequestUri = "api/v1/categories";
+        private const string RequestUri = "api/v1/books";
         private readonly HttpClient httpClient;
         private readonly ITokenService tokenService;
 
-        public CategoryDataService(HttpClient httpClient, ITokenService tokenService)
+        public BookDataService(HttpClient httpClient, ITokenService tokenService)
         {
             this.httpClient = httpClient;
             this.tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<CategoryDto>> CreateCategoryAsync(CategoryViewModel categoryViewModel)
+        public async Task<ApiResponse<BookDto>> CreateBookAsync(BookViewModel bookViewModel)
         {
-            httpClient.DefaultRequestHeaders.Authorization 
+            httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
-            var result = await httpClient.PostAsJsonAsync(RequestUri, categoryViewModel);
+            var result = await httpClient.PostAsJsonAsync(RequestUri, bookViewModel);
             result.EnsureSuccessStatusCode();
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<CategoryDto>>();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<BookDto>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
 
-        public async Task<List<CategoryViewModel>> GetCategoriesAsync()
+        public async Task<List<BookViewModel>> GetBooksAsync()
         {
             var result = await httpClient.GetAsync(RequestUri, HttpCompletionOption.ResponseHeadersRead);
             result.EnsureSuccessStatusCode();
@@ -40,8 +40,8 @@ namespace Lunatic.UI.Services
             {
                 throw new ApplicationException(content);
             }
-            var categories = JsonSerializer.Deserialize<List<CategoryViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return categories!;
+            var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return books!;
         }
     }
 }
