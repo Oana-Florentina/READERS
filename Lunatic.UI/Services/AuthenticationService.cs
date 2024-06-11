@@ -1,6 +1,9 @@
-﻿using Lunatic.UI.Contracts;
+﻿using Blazored.LocalStorage;
+using Lunatic.UI.Contracts;
+using Lunatic.UI.Services.Responses;
 using Lunatic.UI.ViewModels;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace GloboTicket.TicketManagement.App.Services
 {
@@ -8,11 +11,13 @@ namespace GloboTicket.TicketManagement.App.Services
     {
         private readonly HttpClient httpClient;
         private readonly ITokenService tokenService;
+        private readonly IDataService dataService;
 
-        public AuthenticationService(HttpClient httpClient, ITokenService tokenService)
+        public AuthenticationService(HttpClient httpClient, ITokenService tokenService, IDataService dataService)
         {
             this.httpClient = httpClient;
             this.tokenService = tokenService;
+            this.dataService = dataService;
         }
 
         public async Task Login(LoginViewModel loginRequest)
@@ -23,8 +28,15 @@ namespace GloboTicket.TicketManagement.App.Services
                 throw new Exception(await response.Content.ReadAsStringAsync());
             }
             response.EnsureSuccessStatusCode();
-            var token = await response.Content.ReadAsStringAsync();
-            await tokenService.SetTokenAsync(token);
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+            var loginResponse = JsonSerializer.Deserialize<LoginResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+           
+            await tokenService.SetTokenAsync(loginResponse.Token);
+            await dataService.SetItemAsync("UserId", loginResponse.UserId);
         }
 
         public async Task Logout()

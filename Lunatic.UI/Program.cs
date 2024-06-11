@@ -28,6 +28,9 @@ builder.Services.AddBlazoredLocalStorage(config =>
 	config.JsonSerializerOptions.WriteIndented = false;
 });
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddScoped<IDataService, DataService>();
+
 builder.Services.AddScoped<CustomStateProvider>();
 
 builder.Services.AddHttpClient<IBookDataService, BookDataService>(client =>

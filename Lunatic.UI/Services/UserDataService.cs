@@ -1,4 +1,6 @@
 ﻿using Lunatic.UI.Contracts;
+using Lunatic.UI.Payload;
+using Lunatic.UI.Services.Responses;
 using Lunatic.UI.ViewModels;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -58,8 +60,16 @@ namespace Lunatic.UI.Services
             var result = await httpClient.GetAsync($"{RequestUri}/{userId}");
             result.EnsureSuccessStatusCode();
             var content = await result.Content.ReadAsStringAsync();
-            var user = JsonSerializer.Deserialize<ProfileViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            return user!;
+            var response = JsonSerializer.Deserialize<GetUserByIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var profileViewModel = new ProfileViewModel
+            {
+                UserId = response.User.UserId,
+                Username = response.User.Username,
+                FirstName = response.User.FirstName,
+                LastName = response.User.LastName,
+                Email = response.User.Email,
+            };
+            return profileViewModel!;
         }
     }
 }

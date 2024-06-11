@@ -1,4 +1,5 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Lunatic.UI.Contracts
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">Lunatic.App</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
@@ -31,9 +32,9 @@
         </div>
 
         <div class="nav-item px-3">
-                <NavLink class="nav-link" href="profile/{userId:guid}">
+            <NavLink class="nav-link" href="profile">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Profile
-            </NavLink>
+           </NavLink>
         </div>
             </Microsoft.AspNetCore.Components.Authorization.AuthorizeView.Authorized>
         </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
@@ -42,6 +43,11 @@
 </div>
 
 @code {
+    [Inject]
+    public NavigationManager? NavigationManager { get; set; }
+    [Inject]
+    public  ITokenService tokenService { get; set; }
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -50,4 +56,5 @@
     {
         collapseNavMenu = !collapseNavMenu;
     }
+ 
 }

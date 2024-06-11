@@ -1,6 +1,8 @@
-﻿@page "/profile/{userId:guid}"
+﻿@page "/profile"
 @using Lunatic.UI.Contracts
 @using Lunatic.UI.ViewModels
+@using Blazored.LocalStorage;
+
 @inject IUserDataService UserDataService
 @inject NavigationManager NavigationManager
 <head>
@@ -34,16 +36,32 @@ else
 @code {
     [Parameter]
     public Guid userId { get; set; }
+    [Inject]
+    public ITokenService tokenService { get; set; }
+    [Inject]
+    public IDataService dataService { get; set; }
 
     public ProfileViewModel? User { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        User = await UserDataService.GetUserByIdAsync(userId);
+        try
+        {
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+
+            User = await UserDataService.GetUserByIdAsync(userId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading profile: {ex.Message}");
+            // Handle the error (e.g., redirect to login or show a message)
+           
+        }
+        
     }
 
     private void EditProfile()
     {
-        NavigationManager.NavigateTo($"/editProfile/{userId}");
+        NavigationManager.NavigateTo($"/editProfile");
     }
 }
