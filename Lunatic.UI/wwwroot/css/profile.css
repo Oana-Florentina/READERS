@@ -1,0 +1,23 @@
+﻿.profile-details {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+    .profile-details h4 {
+        margin-bottom: 10px;
+    }
+
+    .profile-details p {
+        margin: 5px 0;
+    }
+
+    .profile-details ul {
+        padding-left: 20px;
+    }
+
+    .profile-details button {
+        margin-top: 15px;
+    }

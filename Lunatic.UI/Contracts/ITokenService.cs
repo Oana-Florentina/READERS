@@ -5,5 +5,7 @@
         Task<string> GetTokenAsync();
         Task RemoveTokenAsync();
         Task SetTokenAsync(string token);
+
+        Guid GetUserIdFromToken(string token);
     }
 }

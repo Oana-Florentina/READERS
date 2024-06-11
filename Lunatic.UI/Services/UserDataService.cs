@@ -52,5 +52,14 @@ namespace Lunatic.UI.Services
 
             return user;
         }
+
+        public async Task<ProfileViewModel> GetUserByIdAsync(Guid userId)
+        {
+            var result = await httpClient.GetAsync($"{RequestUri}/{userId}");
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            var user = JsonSerializer.Deserialize<ProfileViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return user!;
+        }
     }
 }
