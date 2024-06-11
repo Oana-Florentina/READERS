@@ -1,0 +1,54 @@
+﻿@page "/profile/{userId:guid}"
+@inject IUserDataService UserDataService
+@inject NavigationManager NavigationManager
+
+<h3>User Profile</h3>
+
+@if (User == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="profile-details">
+        <h4>@User.Username's Profile</h4>
+        <p><strong>Full Name:</strong> @User.FullName</p>
+        <p><strong>Email:</strong> @User.Email</p>
+        <p><strong>Member Since:</strong> @User.MemberSince.ToString("MMMM dd, yyyy")</p>
+
+        <h5>Books Added</h5>
+        @if (User.BooksAdded != null && User.BooksAdded.Any())
+        {
+            <ul>
+                @foreach (var book in User.BooksAdded)
+                {
+                    <li>@book.Title by @book.Author</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No books added.</p>
+        }
+
+        <!-- Action Buttons -->
+        <button class="btn btn-primary" @onclick="EditProfile">Edit Profile</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid userId { get; set; }
+
+    public UserProfileViewModel? User { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await UserDataService.GetUserByIdAsync(userId);
+    }
+
+    private void EditProfile()
+    {
+        NavigationManager.NavigateTo($"/editProfile/{userId}");
+    }
+}

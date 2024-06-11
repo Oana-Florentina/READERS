@@ -1,0 +1,99 @@
+﻿@page "/allBooks"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css\books.css">
+    <title>Books</title>
+</head>
+<h3>All Books</h3>
+
+<!-- Search Bar -->
+<input type="text" placeholder="Search by title, author, year, or genre..." @bind="searchTerm" @bind:event="oninput" class="search-bar" />
+
+<br />
+
+@if (FilteredBooks == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!FilteredBooks.Any())
+{
+    <p>No books found.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>Average Score</th>
+                    <th>Genres</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in FilteredBooks)
+                {
+                    <tr>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.Year</td>
+                        <td>@book.AverageScore</td>
+                        <td>
+                            @if (book.Genres != null && book.Genres.Any())
+                            {
+                                @foreach (var genre in book.Genres)
+                                {
+                                    @genre.ToString() <span>,</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>No genres available</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    [Inject]
+    public IBookDataService? BookDataService { get; set; }
+
+    [Inject]
+    public NavigationManager? NavigationManager { get; set; }
+
+    public List<BookViewModel>? Books { get; set; } = new();
+    private string searchTerm = string.Empty;
+
+    // FilteredBooks is the list of books after applying the search filter
+    private List<BookViewModel> FilteredBooks => string.IsNullOrEmpty(searchTerm)
+        ? Books!
+        : Books!.Where(b =>
+            (b.Title?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (b.Author?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+            (b.Year.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+            (b.AverageScore.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+            (b.Genres != null && b.Genres.Any(genre => genre.ToString().Contains(searchTerm, StringComparison.OrdinalIgnoreCase)))
+        ).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Books = (await BookDataService!.GetBooksAsync()).ToList();
+    }
+
+    private void NavigateToBook(Guid bookId)
+    {
+        NavigationManager!.NavigateTo($"/book/{bookId}");
+    }
+}

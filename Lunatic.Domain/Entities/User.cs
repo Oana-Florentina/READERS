@@ -34,9 +34,6 @@ namespace Lunatic.Domain.Entities {
             Email = email;
         }
 
-       /* public void AddTeam(Team team) => TeamIds.Add(team.TeamId);
-        public void AddTeam(Guid teamId) => TeamIds.Add(teamId);
-        public void RemoveTeam(Team team) => TeamIds.Remove(team.TeamId);
-        public void RemoveTeam(Guid teamId) => TeamIds.Remove(teamId);*/
+     
     }
 }

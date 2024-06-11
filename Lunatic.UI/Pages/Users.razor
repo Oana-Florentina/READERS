@@ -1,0 +1,53 @@
+﻿@page "/users"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@inject IUserDataService UserDataService
+
+<h3>Users</h3>
+
+<input type="text" placeholder="Search by username..." @bind="searchTerm" @bind:event="oninput" />
+
+<br />
+
+@if (FilteredUsers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!FilteredUsers.Any())
+{
+    <p>No users found.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in FilteredUsers)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                 
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private string searchTerm = string.Empty;
+    private List<UserViewModel> UsersList = new();
+    private List<UserViewModel> FilteredUsers =>
+        string.IsNullOrEmpty(searchTerm)
+            ? UsersList
+            : UsersList.Where(u => u.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        UsersList = (await UserDataService!.GetUsersAsync()).ToList();
+    }
+}

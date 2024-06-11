@@ -7,6 +7,7 @@ namespace Lunatic.UI.Contracts
     public interface IBookDataService
     {
         Task<List<BookViewModel>> GetBooksAsync();
+        Task<BookViewModel> GetBookByIdAsync(Guid bookId);
 
         Task<ApiResponse<BookDto>> CreateBookAsync(BookViewModel bookViewModel);
     }

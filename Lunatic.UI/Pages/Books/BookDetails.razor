@@ -1,0 +1,85 @@
+﻿@page "/book/{bookId:guid}"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@inject IBookDataService BookDataService
+@inject NavigationManager NavigationManager
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css\bookDetails.css">
+    <title>Login</title>
+</head>
+<h3>Book Details</h3>
+
+@if (Book == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="book-details">
+        <h4>@Book.Title</h4>
+        <p><strong>Author:</strong> @Book.Author</p>
+        <p><strong>Year:</strong> @Book.Year</p>
+        <p><strong>Description:</strong> @Book.Description</p>
+        <p><strong>Average Score:</strong> @Book.AverageScore</p>
+        <p>
+            <strong>Genres:</strong>
+            @if (Book.Genres != null && Book.Genres.Any())
+            {
+                @foreach (var genre in Book.Genres)
+                {
+                    @genre.ToString() <span>,</span>
+                }
+            }
+            else
+            {
+                <span>No genres available</span>
+            }
+        </p>
+
+        <h5>Ratings</h5>
+        @if (Book.Ratings != null && Book.Ratings.Any())
+        {
+            <ul>
+                @foreach (var rating in Book.Ratings)
+                {
+                    <li>@rating</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No ratings available.</p>
+        }
+
+        <!-- Action Buttons -->
+        <button class="btn btn-success" @onclick="AddToWantToRead">Add to Want to Read</button>
+        <button class="btn btn-primary" @onclick="AddToReadBooks">Add to Read Books</button>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid bookId { get; set; }
+
+    public BookViewModel? Book { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Book = await BookDataService.GetBookByIdAsync(bookId);
+    }
+
+    private void AddToWantToRead()
+    {
+        // Implement the logic to add the book to "Want to Read" list
+        // This might involve a call to the service or updating some state
+        Console.WriteLine($"Book {Book?.Title} added to Want to Read list.");
+    }
+
+    private void AddToReadBooks()
+    {
+        // Implement the logic to add the book to "Read" list
+        // This might involve a call to the service or updating some state
+        Console.WriteLine($"Book {Book?.Title} added to Read Books list.");
+    }
+}

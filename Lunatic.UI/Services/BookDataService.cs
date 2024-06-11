@@ -43,5 +43,15 @@ namespace Lunatic.UI.Services
             var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return books!;
         }
+
+        public async Task<BookViewModel> GetBookByIdAsync(Guid bookId)
+        {
+            var result = await httpClient.GetAsync($"{RequestUri}/{bookId}");
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            var book = JsonSerializer.Deserialize<BookViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return book!;
+        }
+
     }
 }
