@@ -72,7 +72,7 @@ namespace Lunatic.UI.Services
             };
             return profileViewModel!;
         }
-        public async Task<List<BookViewModel>> GetBooksByIdsAsync(Guid userId)
+        public async Task<List<BookViewModel>> GetBooksIWantToReadByIdsAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
             if (!string.IsNullOrEmpty(token))
@@ -88,12 +88,24 @@ namespace Lunatic.UI.Services
             var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return books!;
-
-
-          
-
         }
+        public async Task<List<BookViewModel>> GetBooksIReadByIdsAsync(Guid userId)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
+            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/read");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return books!;
+        }
 
     }
 }

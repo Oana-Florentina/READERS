@@ -7,50 +7,68 @@
 
 <h3>Books I Want to Read</h3>
 
-@if (Books == null)
+<!-- Checkboxes -->
+<div>
+    <input type="checkbox" @bind="IsFirstChecked" id="checkbox1" />
+    <label for="checkbox1">Show Books I Want to Read</label>
+</div>
+<div>
+    <input type="checkbox" @bind="IsSecondChecked" id="checkbox2" disabled />
+    <label for="checkbox2">Placeholder Checkbox 2</label>
+</div>
+<div>
+    <input type="checkbox" @bind="IsThirdChecked" id="checkbox3" disabled />
+    <label for="checkbox3">Placeholder Checkbox 3</label>
+</div>
+
+<!-- Conditionally Display the Table -->
+@if (IsFirstChecked)
 {
-    <p><em>Loading...</em></p>
-}
-else if (!Books.Any())
-{
-    <p>No books in your Want to Read list.</p>
-}
-else
-{
-    <table class="table table-responsive table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Year</th>
-                <th>Genres</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var book in Books)
-            {
+    @if (Books == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else if (!Books.Any())
+    {
+        <p>No books in your Want to Read list.</p>
+    }
+    else
+    {
+        <table class="table table-responsive table-striped">
+            <thead>
                 <tr>
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td>@book.Year</td>
-                    <td>
-                        @if (book.Genres != null && book.Genres.Any())
-                        {
-                            @string.Join(", ", book.Genres)
-                        }
-                        else
-                        {
-                            <span>No genres available</span>
-                        }
-                    </td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">View Details</button>
-                    </td>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>Genres</th>
+                    <th>Actions</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var book in Books)
+                {
+                    <tr>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.Year</td>
+                        <td>
+                            @if (book.Genres != null && book.Genres.Any())
+                            {
+                                @string.Join(", ", book.Genres)
+                            }
+                            else
+                            {
+                                <span>No genres available</span>
+                            }
+                        </td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">View Details</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
 @code {
@@ -62,24 +80,29 @@ else
 
     public List<BookViewModel>? Books { get; set; } = new();
 
+    private bool IsFirstChecked { get; set; }
+    private bool IsSecondChecked { get; set; }
+    private bool IsThirdChecked { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         try
         {
             var userId = await dataService.GetItemAsync<Guid>("UserId");
-            Console.WriteLine($"userid: {userId}");
-
+            Console.WriteLine($"UserId: {userId}");
 
             var user = await UserDataService.GetUserByIdAsync(userId);
-            Console.WriteLine($"books: {user.WantToReadIds}");
+            Console.WriteLine($"Books: {user.WantToReadIds}");
 
             if (user?.WantToReadIds != null)
             {
-                Books = (await UserDataService.GetBooksByIdsAsync(userId)).ToList();
-                Console.WriteLine($"books: {Books}");
+                Books = (await UserDataService.GetBooksIWantToReadByIdsAsync(userId)).ToList();
+                Console.WriteLine($"Books: {Books}");
             }
             else
-                Console.WriteLine($"bho");
+            {
+                Console.WriteLine("No books in the Want to Read list.");
+            }
         }
         catch (Exception ex)
         {
@@ -93,4 +116,3 @@ else
         NavigationManager.NavigateTo($"/book/{bookId}");
     }
 }
-
