@@ -3,11 +3,16 @@
 @using Lunatic.UI.ViewModels
 @inject IBookDataService BookDataService
 @inject NavigationManager NavigationManager
+@inject IUserDataService UserDataService
+@inject IRatingDataService RatingDataService
+
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css\bookDetails.css">
     <title>Book details</title>
 </head>
+
 <h3>Book Details</h3>
 
 @if (Book == null)
@@ -18,7 +23,6 @@ else
 {
     <div class="book-details">
         <h4>@Book.Title</h4>
-        <p><strong>Title:</strong> @Book.Title</p>
         <p><strong>Author:</strong> @Book.Author</p>
         <p><strong>Year:</strong> @Book.Year</p>
         <p><strong>Description:</strong> @Book.Description</p>
@@ -55,37 +59,164 @@ else
 
         <!-- Action Buttons -->
         <button class="btn btn-success" @onclick="AddToWantToRead">Add to Want to Read</button>
-        <button class="btn btn-primary" @onclick="AddToReadBooks">Add to Read Books</button>
+        <button class="btn btn-primary" @onclick="OpenReadBooksModal">Add to Read Books</button>
+    </div>
+}
+
+<!-- Modal for Adding to Read Books -->
+@if (IsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add to Read Books</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" id="startDate" class="form-control" @bind="StartDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">End Date</label>
+                        <input type="date" id="endDate" class="form-control" @bind="EndDate">
+                    </div>
+                    <div class="mb-3">
+                        <label for="isFavorite" class="form-label">Is Favorite</label>
+                        <input type="checkbox" id="isFavorite" @bind="IsFavorite">
+                    </div>
+                    <div class="mb-3">
+                        <label for="score" class="form-label">Rating Score (optional)</label>
+                        <input type="number" id="score" class="form-control" @bind="Score" min="0" max="5" step="0.1">
+                    </div>
+                    <div class="mb-3">
+                        <label for="commentMessage" class="form-label">Comment (optional)</label>
+                        <textarea id="commentMessage" class="form-control" @bind="CommentMessage"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="AddToReadBooks">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
 
 @code {
     [Parameter]
     public Guid bookId { get; set; }
-    [Inject]
-    public IUserDataService UserDataService { get; set; }
 
     public BookViewModel? Book { get; set; }
 
-    public ProfileViewModel? User { get; set; }
+    [Inject]
+    public IDataService dataService { get; set; }
+
+    // Modal related properties
+    private bool IsModalVisible { get; set; }
+    private DateTime StartDate { get; set; } = DateTime.Now;
+    private DateTime EndDate { get; set; } = DateTime.Now;
+    private bool IsFavorite { get; set; }
+    private float Score { get; set; } = 0; // Default value for score
+    private string CommentMessage { get; set; } = string.Empty; // Default value for comment
 
     protected override async Task OnInitializedAsync()
     {
-        Book = await BookDataService.GetBookByIdAsync(bookId);
+        Console.WriteLine($"BookId: {bookId}");
+        if (bookId != Guid.Empty)
+        {
+            Book = await BookDataService.GetBookByIdAsync(bookId);
+            Console.WriteLine($"Book: {Book?.Title}");
+            if (Book == null)
+            {
+                NavigationManager.NavigateTo("/404");
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/404");
+        }
+    }
+
+
+    private void OpenReadBooksModal()
+    {
+        IsModalVisible = true;
+    }
+
+    private void CloseModal()
+    {
+        IsModalVisible = false;
     }
 
     private async Task AddToWantToRead()
     {
-        
-            Console.WriteLine($"ok");
-            // Handle the error (e.g., show a message to the user)
-        
+        // Logic to add the book to "Want to Read" list
+        Console.WriteLine($"Book {Book?.Title} added to Want to Read list.");
     }
 
-    private void AddToReadBooks()
+    private async Task AddToReadBooks()
     {
-        // Implement the logic to add the book to "Read" list
-        // This might involve a call to the service or updating some state
-        Console.WriteLine($"Book {Book?.Title} added to Read Books list.");
+        try
+        {
+            Guid ratingId = Guid.Empty;
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+
+            // Create a rating if score or comment are provided
+            if (Score > 0 || !string.IsNullOrWhiteSpace(CommentMessage))
+            {
+                var rating = new RatingViewModel
+                    {
+                        RatingId = Guid.NewGuid(),
+                        BookId = bookId,
+                        UserId = userId,
+                        Score = Score,
+                        CommentMessage = CommentMessage
+                    };
+                Console.WriteLine($"Rating: {rating.Score}");
+                var createdRatingResponse = await RatingDataService.AddRatingAsync(rating);
+
+                if (createdRatingResponse.Success)
+                {
+                    Console.WriteLine("Rating added successfully.");
+                    var createdRating = createdRatingResponse.Rating;
+                    Console.WriteLine($"flory");
+                    ratingId = createdRating.RatingId;
+                    Console.WriteLine($"RatingId: {ratingId}");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to add rating.");
+                }
+            }
+
+
+
+            // Create the reader with the provided details
+            var reader = new ReaderViewModel
+                {
+                    ReaderId = Guid.NewGuid(),
+                    BookId = bookId,
+                    UserId = userId,
+                    StartDate = StartDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    EndDate = EndDate.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+                    RatingId = ratingId,
+                    IsFavorite = IsFavorite
+                };
+            Console.WriteLine($"EndDate: {reader.EndDate}");
+
+            Console.WriteLine($"IsFavorite: {reader.IsFavorite}");
+            Console.WriteLine($"RatingId: {reader.RatingId}");
+
+            var addedReader = await UserDataService.AddReaderAsync(reader, userId);
+
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding book to read list: {ex.Message}");
+            // Handle error (e.g., show a message to the user)
+        }
     }
 }

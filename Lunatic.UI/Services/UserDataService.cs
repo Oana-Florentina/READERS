@@ -98,7 +98,7 @@ namespace Lunatic.UI.Services
             }
 
             // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
-            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/read");
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/readers");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -106,6 +106,30 @@ namespace Lunatic.UI.Services
 
             return books!;
         }
+
+        public async Task<AddReaderResponse> AddReaderAsync(ReaderViewModel readerViewModel, Guid userId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization =
+                 new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            Console.WriteLine(readerViewModel.RatingId);
+
+            var result = await httpClient.PostAsJsonAsync($"api/v1/reader", readerViewModel);
+            var content = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            result.EnsureSuccessStatusCode();
+
+            var contentx = await result.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            var response = JsonSerializer.Deserialize<AddReaderResponse>(content,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return response!;
+
+        }
+
+
+
+
 
     }
 }

@@ -46,7 +46,6 @@ namespace Lunatic.Application.Features.Ratings.Commands.UpdateRating
             var rating = new Rating(
                request.BookId,
                request.UserId,
-               request.RatingId,
                request.Score,
                request.CommentMessage
            );

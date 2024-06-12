@@ -3,9 +3,9 @@ namespace Lunatic.Domain.Entities
 {
     public class Rating
     {
-        public Rating(Guid ratingId, Guid bookId, Guid userId,float score, string commentMessage)
+        public Rating( Guid bookId, Guid userId,float score, string commentMessage)
         {
-            RatingId = ratingId;
+            RatingId = Guid.NewGuid();
             BookId = bookId;
             UserId = userId;
             Score = score;

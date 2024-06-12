@@ -43,6 +43,11 @@ builder.Services.AddHttpClient<IUserDataService, UserDataService>(client =>
     client.BaseAddress = new Uri("http://localhost:5012/");
 });
 
+builder.Services.AddHttpClient<IRatingDataService, RatingDataService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5012/");
+});
+
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
