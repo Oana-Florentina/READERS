@@ -49,6 +49,7 @@ namespace Lunatic.Application.Features.Readers.Commands.CreateReader
             );
 
             await this.readerRepository.AddAsync(reader);
+          
 
             return new CreateReaderCommandResponse
             {

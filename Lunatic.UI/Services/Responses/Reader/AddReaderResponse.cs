@@ -1,6 +1,6 @@
 ﻿using Lunatic.UI.Payload;
 
-namespace Lunatic.UI.Services.Responses
+namespace Lunatic.UI.Services.Responses.Reader
 {
     public class AddReaderResponse : Response
     {

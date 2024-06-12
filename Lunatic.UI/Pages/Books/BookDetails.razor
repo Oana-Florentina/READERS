@@ -4,6 +4,7 @@
 @inject IBookDataService BookDataService
 @inject NavigationManager NavigationManager
 @inject IUserDataService UserDataService
+@inject IReaderDataService ReaderDataService
 @inject IRatingDataService RatingDataService
 
 
@@ -204,12 +205,16 @@ else
                     RatingId = ratingId,
                     IsFavorite = IsFavorite
                 };
-            Console.WriteLine($"EndDate: {reader.EndDate}");
 
-            Console.WriteLine($"IsFavorite: {reader.IsFavorite}");
-            Console.WriteLine($"RatingId: {reader.RatingId}");
 
-            var addedReader = await UserDataService.AddReaderAsync(reader, userId);
+            var addedReader = await ReaderDataService.AddReaderAsync(reader);
+            if(addedReader.Success)
+            {  
+                Console.WriteLine($"Reader added successfully: {addedReader.Reader.ReaderId}");
+                Console.WriteLine($"UserId: {userId}");
+                var addReaderToUser = await UserDataService.AddReaderToUserAsync(userId, addedReader.Reader.ReaderId);
+                Console.WriteLine($"Reader added to user: {addReaderToUser.Success}");
+            }
 
             CloseModal();
         }

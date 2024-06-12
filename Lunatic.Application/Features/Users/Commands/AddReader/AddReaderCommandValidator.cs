@@ -30,7 +30,6 @@ namespace Lunatic.Application.Features.Users.Commands.AddReader
                .NotNull().WithMessage("{PropertyName} is required.")
                .MustAsync(async (readerId, cancellationToken) => await this.readerRepository.ExistsByIdAsync(readerId))
                .WithMessage("{PropertyName} must exists.");
-            this.readerRepository = readerRepository;
         }
     }
 }

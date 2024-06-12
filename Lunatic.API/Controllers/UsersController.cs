@@ -9,6 +9,8 @@ using Lunatic.Application.Features.Users.Queries.GetById;
 using Lunatic.Application.Features.Users.Queries.GetReadersByUserId;
 using Lunatic.Application.Features.Users.Queries.GetWantToRead;
 using Microsoft.AspNetCore.Mvc;
+using Lunatic.Application.Features.Projects.Commands.UpdateProjectTasksSection;
+using Lunatic.Domain.Entities;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -130,13 +132,16 @@ namespace Lunatic.API.Controllers {
         [Produces("application/json")]
         [ProducesResponseType<AddReaderCommandResponse>(StatusCodes.Status201Created)]
         [ProducesResponseType<AddReaderCommandResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> GetWantToRead(Guid userId, Guid readerId)
+        public async Task<IActionResult> AddReaderToUser(Guid userId, AddReaderCommand command)
         {
-            var command = new AddReaderCommand
+            if (userId != command.UserId)
             {
-                UserId = userId,
-                ReaderId = readerId
-            };
+                return BadRequest(new AddReaderCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }
+                });
+            }
             var result = await Mediator.Send(command);
             if (!result.Success)
             {

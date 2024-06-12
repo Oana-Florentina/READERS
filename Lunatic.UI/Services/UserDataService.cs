@@ -1,6 +1,7 @@
 ﻿using Lunatic.UI.Contracts;
 using Lunatic.UI.Payload;
 using Lunatic.UI.Services.Responses;
+using Lunatic.UI.Services.Responses.Reader;
 using Lunatic.UI.ViewModels;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -106,26 +107,52 @@ namespace Lunatic.UI.Services
 
             return books!;
         }
-
-        public async Task<AddReaderResponse> AddReaderAsync(ReaderViewModel readerViewModel, Guid userId)
+        public async Task<AddReaderToUserResponse> AddReaderToUserAsync(Guid userId, Guid readerId)
         {
-            httpClient.DefaultRequestHeaders.Authorization =
-                 new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
-            Console.WriteLine(readerViewModel.RatingId);
+            try
+            {
+                // Set Authorization Header
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
 
-            var result = await httpClient.PostAsJsonAsync($"api/v1/reader", readerViewModel);
-            var content = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(content);
-            result.EnsureSuccessStatusCode();
+                // Create the payload for the API request
+                var command = new
+                {
+                    UserId = userId,
+                    ReaderId = readerId
+                };
 
-            var contentx = await result.Content.ReadAsStringAsync();
-            Console.WriteLine(content);
-            var response = JsonSerializer.Deserialize<AddReaderResponse>(content,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                // Send the POST request
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/{userId}/readers", command);
 
-            return response!;
+                // Read the response content
+                var content = await result.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response: {content}");
 
+                // Check if the request was successful
+                if (!result.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error in AddReaderToUserAsync call.");
+                    throw new ApplicationException($"API Error: {result.StatusCode} - {content}");
+                }
+
+                // Deserialize the response
+                var response = JsonSerializer.Deserialize<AddReaderToUserResponse>(content,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                // Log exception details
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
         }
+
+
+
+
 
 
 
