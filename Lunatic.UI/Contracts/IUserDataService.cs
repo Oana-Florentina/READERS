@@ -7,6 +7,6 @@ namespace Lunatic.UI.Contracts
         Task<List<UserViewModel>> GetUsersAsync();
         Task<ProfileViewModel> GetUserByIdAsync(Guid userId);
 
-        Task<List<BookViewModel>> GetBooksByIdsAsync(List<Guid> bookIds);
+        Task<List<BookViewModel>> GetBooksByIdsAsync(Guid userId);
     }
 }

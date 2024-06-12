@@ -60,7 +60,7 @@ else
     [Inject]
     public IDataService dataService { get; set; }
 
-    public List<BookViewModel> Books { get; set; } = new List<BookViewModel>();
+    public List<BookViewModel>? Books { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,12 +71,15 @@ else
 
 
             var user = await UserDataService.GetUserByIdAsync(userId);
+            Console.WriteLine($"books: {user.WantToReadIds}");
 
-            if (user?.WantToReadIds != null && user.WantToReadIds.Any())
+            if (user?.WantToReadIds != null)
             {
-                Books = await UserDataService.GetBooksByIdsAsync(user.WantToReadIds);
+                Books = (await UserDataService.GetBooksByIdsAsync(userId)).ToList();
                 Console.WriteLine($"books: {Books}");
             }
+            else
+                Console.WriteLine($"bho");
         }
         catch (Exception ex)
         {

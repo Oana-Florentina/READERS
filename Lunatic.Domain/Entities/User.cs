@@ -35,8 +35,8 @@ namespace Lunatic.Domain.Entities {
         }
 
         public void AddWantToRead(Guid BookId)
-        { 
-            ReaderIds.Add(BookId);
+        {
+            WantToReadIds.Add(BookId);
         }
 
      

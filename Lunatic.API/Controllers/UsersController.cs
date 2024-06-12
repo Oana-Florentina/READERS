@@ -5,6 +5,7 @@ using Lunatic.Application.Features.Users.Commands.DeleteUser;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Lunatic.Application.Features.Users.Queries.GetAll;
 using Lunatic.Application.Features.Users.Queries.GetById;
+using Lunatic.Application.Features.Users.Queries.GetWantToRead;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lunatic.API.Controllers {
@@ -25,7 +26,7 @@ namespace Lunatic.API.Controllers {
         [Produces("application/json")]
         [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status201Created)]
         [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddReader(Guid userId,  Guid bookId)
+        public async Task<IActionResult> AddWantToRead(Guid userId,  Guid bookId)
         {
 			var command = new AddWantToReadCommand
 			{
@@ -91,6 +92,20 @@ namespace Lunatic.API.Controllers {
         {
             var result = await Mediator.Send(new GetAllUsersQuery());
             return Ok(result.Users);
+        }
+
+        [HttpGet("{userId}/wantToRead")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetWantToReadQueryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetWantToReadQueryResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetWantToRead(Guid userId)
+        {
+            var result = await Mediator.Send(new GetWantToReadQuery(userId));
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result.Books);
         }
 
 

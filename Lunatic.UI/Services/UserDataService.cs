@@ -72,7 +72,7 @@ namespace Lunatic.UI.Services
             };
             return profileViewModel!;
         }
-        public async Task<List<BookViewModel>> GetBooksByIdsAsync(List<Guid> bookIds)
+        public async Task<List<BookViewModel>> GetBooksByIdsAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
             if (!string.IsNullOrEmpty(token))
@@ -81,13 +81,17 @@ namespace Lunatic.UI.Services
             }
 
             // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
-            var response = await httpClient.PostAsJsonAsync("api/v1/books/byIds", bookIds);
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/wanttoread");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
             var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return books ?? new List<BookViewModel>();
+            return books!;
+
+
+          
+
         }
 
 
