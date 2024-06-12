@@ -68,8 +68,28 @@ namespace Lunatic.UI.Services
                 FirstName = response.User.FirstName,
                 LastName = response.User.LastName,
                 Email = response.User.Email,
+                WantToReadIds = response.User.WantToReadIds,
             };
             return profileViewModel!;
         }
+        public async Task<List<BookViewModel>> GetBooksByIdsAsync(List<Guid> bookIds)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
+            var response = await httpClient.PostAsJsonAsync("api/v1/books/byIds", bookIds);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return books ?? new List<BookViewModel>();
+        }
+
+
     }
 }

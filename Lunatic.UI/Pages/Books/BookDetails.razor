@@ -61,19 +61,24 @@ else
 @code {
     [Parameter]
     public Guid bookId { get; set; }
+    [Inject]
+    public IUserDataService UserDataService { get; set; }
 
     public BookViewModel? Book { get; set; }
+
+    public ProfileViewModel? User { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Book = await BookDataService.GetBookByIdAsync(bookId);
     }
 
-    private void AddToWantToRead()
+    private async Task AddToWantToRead()
     {
-        // Implement the logic to add the book to "Want to Read" list
-        // This might involve a call to the service or updating some state
-        Console.WriteLine($"Book {Book?.Title} added to Want to Read list.");
+        
+            Console.WriteLine($"ok");
+            // Handle the error (e.g., show a message to the user)
+        
     }
 
     private void AddToReadBooks()

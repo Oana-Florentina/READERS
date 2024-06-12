@@ -4,7 +4,8 @@ using MediatR;
 
 
 namespace Lunatic.Application.Features.Users.Commands.UpdateUser {
-    public class UpdateUserCommand : IRequest<UpdateUserCommandResponse> {
+    public class UpdateUserCommand : IRequest<UpdateUserCommandResponse>
+    {
         public Guid UserId { get; set; } = default!;
 
         public string FirstName { get; set; } = default!;

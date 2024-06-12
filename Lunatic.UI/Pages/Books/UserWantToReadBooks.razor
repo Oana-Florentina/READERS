@@ -1,0 +1,93 @@
+﻿@page "/userWantToReadBooks"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@inject ITokenService tokenService
+@inject IUserDataService UserDataService
+@inject NavigationManager NavigationManager
+
+<h3>Books I Want to Read</h3>
+
+@if (Books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!Books.Any())
+{
+    <p>No books in your Want to Read list.</p>
+}
+else
+{
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Genres</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Year</td>
+                    <td>
+                        @if (book.Genres != null && book.Genres.Any())
+                        {
+                            @string.Join(", ", book.Genres)
+                        }
+                        else
+                        {
+                            <span>No genres available</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">View Details</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public Guid userId { get; set; }
+
+    [Inject]
+    public IDataService dataService { get; set; }
+
+    public List<BookViewModel> Books { get; set; } = new List<BookViewModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+            Console.WriteLine($"userid: {userId}");
+
+
+            var user = await UserDataService.GetUserByIdAsync(userId);
+
+            if (user?.WantToReadIds != null && user.WantToReadIds.Any())
+            {
+                Books = await UserDataService.GetBooksByIdsAsync(user.WantToReadIds);
+                Console.WriteLine($"books: {Books}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Want to Read books: {ex.Message}");
+            // Handle the error (e.g., show a message or redirect)
+        }
+    }
+
+    private void NavigateToBook(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
+}
+

@@ -34,6 +34,11 @@ namespace Lunatic.Domain.Entities {
             Email = email;
         }
 
+        public void AddWantToRead(Guid BookId)
+        { 
+            ReaderIds.Add(BookId);
+        }
+
      
     }
 }

@@ -1,4 +1,5 @@
 using Lunatic.Application.Features.Readers.Queries.GetAll;
+using Lunatic.Application.Features.Users.Commands.AddWantToRead;
 using Lunatic.Application.Features.Users.Commands.CreateUser;
 using Lunatic.Application.Features.Users.Commands.DeleteUser;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
@@ -20,7 +21,26 @@ namespace Lunatic.API.Controllers {
 			return Ok(result);
 		}
 
-		[HttpPut("{userId}")]
+        [HttpPost("{userId}/wantToRead")]
+        [Produces("application/json")]
+        [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status201Created)]
+        [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddReader(Guid userId,  Guid bookId)
+        {
+			var command = new AddWantToReadCommand
+			{
+				UserId = userId,
+				BookId = bookId
+			};
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpPut("{userId}")]
 		[Produces("application/json")]
 		[ProducesResponseType<UpdateUserCommandResponse>(StatusCodes.Status200OK)]
 		[ProducesResponseType<UpdateUserCommandResponse>(StatusCodes.Status400BadRequest)]
