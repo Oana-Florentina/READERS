@@ -23,6 +23,7 @@ namespace Lunatic.Domain.Entities {
         public string Password { get; private set; }
         public Role Role { get; private set; }
         public List<Guid> ReaderIds { get; private set; } = new List<Guid>();
+        public List<Guid> FavoriteIds { get; private set; } = new List<Guid>();
         public List<Guid> WantToReadIds { get; private set; } = new List<Guid>();
         public List<Guid> BookClubIds { get; private set; } = new List<Guid>();
         public List<Guid> FriendsIds { get; private set; } = new List<Guid>();
@@ -37,6 +38,11 @@ namespace Lunatic.Domain.Entities {
         public void AddWantToRead(Guid BookId)
         {
             WantToReadIds.Add(BookId);
+        }
+
+        public void AddFavorite(Guid BookId)
+        {
+            FavoriteIds.Add(BookId);
         }
 
         public void AddReader(Guid UserId, Guid BookId)

@@ -207,6 +207,10 @@ namespace Lunatic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<List<Guid>>("FavoriteIds")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");

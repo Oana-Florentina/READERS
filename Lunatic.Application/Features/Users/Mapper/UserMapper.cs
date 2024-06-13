@@ -23,6 +23,7 @@ namespace Lunatic.Application.Features.Users.Mapper
                 Role = user.Role,
                 ReaderIds = user.ReaderIds,
                 WantToReadIds = user.WantToReadIds,
+                FavoriteIds = user.FavoriteIds,
                 BookClubIds = user.BookClubIds,
                 FriendsIds = user.FriendsIds
 

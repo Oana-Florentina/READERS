@@ -7,10 +7,12 @@ using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Lunatic.Application.Features.Users.Queries.GetAll;
 using Lunatic.Application.Features.Users.Queries.GetById;
 using Lunatic.Application.Features.Users.Queries.GetReadersByUserId;
+using Lunatic.Application.Features.Users.Queries.GetFavsByUserId;
 using Lunatic.Application.Features.Users.Queries.GetWantToRead;
 using Microsoft.AspNetCore.Mvc;
 using Lunatic.Application.Features.Projects.Commands.UpdateProjectTasksSection;
 using Lunatic.Domain.Entities;
+using Lunatic.Application.Features.Users.Commands.AddFavorite;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -117,6 +119,43 @@ namespace Lunatic.API.Controllers {
             }
             return Ok(result.Books);
         }
+        [HttpGet("{userId}/favorites")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetFavsByUserIdQueryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetFavsByUserIdQueryResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUsersFavs(Guid userId)
+        {
+            var result = await Mediator.Send(new GetFavsByUserIdQuery(userId));
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result.Books);
+        }
+
+        [HttpPost("{userId}/favorites")]
+        [Produces("application/json")]
+        [ProducesResponseType<AddFavoriteCommandResponse>(StatusCodes.Status201Created)]
+        [ProducesResponseType<AddFavoriteCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddFavorite(Guid userId, AddFavoriteCommand command)
+        {
+            if (userId != command.UserId)
+            {
+                return BadRequest(new AddFavoriteCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }
+                });
+            }
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+
 
         [HttpGet("{userId}/readers")]
         [Produces("application/json")]

@@ -50,6 +50,7 @@ else
                     </td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => ShowDetails(book.BookId)">Details</button>
+                        <button class="btn btn-primary" @onclick="() => AddToFavorites(book.BookId)">Add To Favorites</button>
                     </td>
                 </tr>
             }
@@ -147,11 +148,40 @@ else
         var readers = await ReaderDataService.GetReaderByBookIdAndUserIdAsync(bookId, userId);
         Console.WriteLine($"{readers.Reader.ReaderId}");
         SelectedReader = readers.Reader;
-        if (readers != null )
+        if (readers != null)
         {
-           
+
             Console.WriteLine($"StartDate: {SelectedReader.StartDate}");
             IsModalVisible = true;
+        }
+    }
+    private async Task AddToFavorites(Guid bookId)
+    {
+        try
+        {
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+            Console.WriteLine($"UserId: {userId}");
+            Console.WriteLine($"BookId: {bookId}");
+
+            var addWantToFavoritesResponse = await UserDataService.AddToFavoritesAsync(userId, bookId);
+            if (addWantToFavoritesResponse.Success)
+            {
+            }
+            else
+            {
+                if (addWantToFavoritesResponse.ValidationErrors != null)
+                {
+                    foreach (var error in addWantToFavoritesResponse.ValidationErrors)
+                    {
+                        Console.WriteLine($"Validation Error: {error}");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding book to Want to Read list: {ex.Message}");
+            // Handle error (e.g., show a message to the user)
         }
     }
 

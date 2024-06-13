@@ -11,6 +11,6 @@ namespace Lunatic.UI.Payload
         public string Username { get; set; } = default!;
 
         public List<Guid> WantToReadIds { get; private set; } = new List<Guid>();
-
+        public List<Guid> FavoriteIds { get; private set; } = new List<Guid>();
     }
 }
