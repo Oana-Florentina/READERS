@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Lunatic.Application.Features.Projects.Commands.UpdateProjectTasksSection;
 using Lunatic.Domain.Entities;
 using Lunatic.Application.Features.Users.Commands.AddFavorite;
+using Lunatic.Application.Features.Users.Commands.SendFriendRequest;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -180,6 +181,28 @@ namespace Lunatic.API.Controllers {
             if (userId != command.UserId)
             {
                 return BadRequest(new AddReaderCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }
+                });
+            }
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
+        [HttpPost("{userId}/sendFriendRequest")]
+        [Produces("application/json")]
+        [ProducesResponseType<SendFriendRequestCommandResponse>(StatusCodes.Status201Created)]
+        [ProducesResponseType<SendFriendRequestCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SendFriendRequest(Guid userId, SendFriendRequestCommand command)
+        {
+            if (userId != command.SenderId)
+            {
+                return BadRequest(new SendFriendRequestCommandResponse
                 {
                     Success = false,
                     ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }

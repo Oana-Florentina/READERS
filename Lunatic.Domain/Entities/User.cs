@@ -28,7 +28,7 @@ namespace Lunatic.Domain.Entities {
         public List<Guid> BookClubIds { get; private set; } = new List<Guid>();
         public List<Guid> FriendsIds { get; private set; } = new List<Guid>();
 
-        public List<Guid> FriendsRequests {  get; private set; } = new List<Guid>();
+        public List<Guid> FriendsRequests { get; private set; } = new List<Guid>();
 
         
         public void Update(string firstName, string lastName, string email) {

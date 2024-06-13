@@ -26,7 +26,8 @@ namespace Lunatic.Infrastructure {
             services.AddScoped<IRatingRepository, RatingRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-			services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+            services.AddScoped<IEmailService, EmailService>();
 			return services;
 		}
 	}

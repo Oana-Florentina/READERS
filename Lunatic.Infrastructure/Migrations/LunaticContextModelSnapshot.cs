@@ -60,6 +60,29 @@ namespace Lunatic.Infrastructure.Migrations
                     b.ToTable("Books");
                 });
 
+            modelBuilder.Entity("Lunatic.Domain.Entities.FriendRequest", b =>
+                {
+                    b.Property<Guid>("FriendRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("FriendRequestId");
+
+                    b.ToTable("FriendRequest");
+                });
+
             modelBuilder.Entity("Lunatic.Domain.Entities.Project", b =>
                 {
                     b.Property<Guid>("ProjectId")
@@ -216,6 +239,10 @@ namespace Lunatic.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<List<Guid>>("FriendsIds")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
+                    b.Property<List<Guid>>("FriendsRequests")
                         .IsRequired()
                         .HasColumnType("uuid[]");
 
