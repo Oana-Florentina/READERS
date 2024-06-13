@@ -14,5 +14,6 @@ namespace Lunatic.UI.Contracts
         Task<List<BookViewModel>> GetBooksIReadByIdsAsync(Guid userId);
         Task<AddReaderToUserResponse> AddReaderToUserAsync(Guid userId, Guid readerId);
         Task<AddWantToReadResponse> AddWantToReadAsync(Guid userId, Guid bookId);
+        Task<List<BookViewModel>> GetFavoriteBooksByUserIdAsync(Guid userId);
     }
 }

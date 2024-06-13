@@ -37,5 +37,34 @@ namespace Lunatic.UI.Services
 
             return response!;
         }
+
+
+        public async Task<GetReaderByBookIdAndUserIdResponse> GetReaderByBookIdAndUserIdAsync(Guid bookId, Guid userId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+            
+            var response = await httpClient.GetAsync($"{RequestUri}/bybookanduser?bookId={bookId}&userId={userId}");
+
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+            var reader = JsonSerializer.Deserialize<GetReaderByBookIdAndUserIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return reader!;
+        }
+
+        public async Task<List<ReaderViewModel>> GetReadersByUserIdAsync(Guid userId)
+        {
+            httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+            var response = await httpClient.GetAsync($"{RequestUri}/byUser/{userId}");
+
+            var content = await response.Content.ReadAsStringAsync();
+            var readers = JsonSerializer.Deserialize<List<ReaderViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return readers!;
+        }
+
+
     }
 }

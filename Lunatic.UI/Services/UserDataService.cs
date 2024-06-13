@@ -82,11 +82,12 @@ namespace Lunatic.UI.Services
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
-            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
             var response = await httpClient.GetAsync($"{RequestUri}/{userId}/wanttoread");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
+
             var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return books!;
@@ -104,6 +105,7 @@ namespace Lunatic.UI.Services
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(content);
             var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
             return books!;
@@ -191,6 +193,23 @@ namespace Lunatic.UI.Services
                 Console.WriteLine($"Exception: {ex.Message}");
                 throw;
             }
+        }
+        public async Task<List<BookViewModel>> GetFavoriteBooksByUserIdAsync(Guid userId)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/favorites");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var books = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return books!;
         }
 
 

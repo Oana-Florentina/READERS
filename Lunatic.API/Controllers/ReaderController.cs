@@ -3,6 +3,7 @@ using Lunatic.Application.Features.Readers.Commands.CreateReader;
 using Lunatic.Application.Features.Readers.Commands.DeleteReader;
 using Lunatic.Application.Features.Readers.Commands.UpdateReader;
 using Lunatic.Application.Features.Readers.Queries.GetAll;
+using Lunatic.Application.Features.Readers.Queries.GetReaderByBookIdAndUserId;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,20 @@ namespace Lunatic.API.Controllers
             if (!result.Success)
             {
                 return BadRequest(result);
+            }
+            return Ok(result);
+        }
+        [HttpGet("bybookanduser")]
+        [Produces("application/json")]
+        [ProducesResponseType<GetReaderByBookIdAndUserIdQueryResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<GetReaderByBookIdAndUserIdQueryResponse>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetReaderByBookIdAndUserId([FromQuery] Guid bookId, [FromQuery] Guid userId)
+        {
+            var query = new GetReaderByBookIdAndUserIdQuery { BookId = bookId, UserId = userId };
+            var result = await Mediator.Send(query);
+            if (!result.Success)
+            {
+                return NotFound(result);
             }
             return Ok(result);
         }

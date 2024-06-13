@@ -1,0 +1,167 @@
+﻿@page "/userReaders"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@using Lunatic.UI.Payload;
+@inject ITokenService tokenService
+@inject IUserDataService UserDataService
+@inject NavigationManager NavigationManager
+@inject IReaderDataService ReaderDataService
+@inject IRatingDataService RatingDataService
+@inject IBookDataService BookDataService
+
+<h3>Books I Have Read</h3>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!Books.Any())
+{
+    <p>No read books to display.</p>
+}
+else
+{
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Genres</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Books)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.Year</td>
+                    <td>
+                        @if (book.Genres != null && book.Genres.Any())
+                        {
+                            @string.Join(", ", book.Genres)
+                        }
+                        else
+                        {
+                            <span>No genres available</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => ShowDetails(book.BookId)">Details</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<!-- Modal for showing reader details -->
+@if (IsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reader Details</h5>
+                    <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Start Date:</strong> @SelectedReader?.StartDate</p>
+                    <p><strong>End Date:</strong> @SelectedReader?.EndDate</p>
+                    <p><strong>Is Favorite:</strong> @SelectedReader?.IsFavorite</p>
+                    @if (SelectedRating != null)
+                    {
+                        <p><strong>Rating Score:</strong> @SelectedRating.Score</p>
+                        <p><strong>Comment:</strong> @SelectedRating.CommentMessage</p>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid userId { get; set; }
+
+    [Inject]
+    public IDataService dataService { get; set; }
+
+    public List<BookViewModel> Books { get; set; } = new();
+    private bool isLoading { get; set; } = false;
+    private bool IsModalVisible { get; set; } = false;
+    private ReaderDto SelectedReader { get; set; }
+    private RatingViewModel? SelectedRating { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadBooks();
+    }
+
+    private async Task LoadBooks()
+    {
+        if (isLoading)
+        {
+            return;
+        }
+
+        isLoading = true;
+
+        try
+        {
+            Books.Clear();
+
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+            Console.WriteLine($"UserId: {userId}");
+
+            var readers = await UserDataService.GetBooksIReadByIdsAsync(userId);
+
+            foreach (var reader in readers)
+            {
+                var book = await BookDataService.GetBookByIdAsync(reader.BookId);
+                if (book != null)
+                {
+                    Books.Add(book);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading read books: {ex.Message}");
+            // Handle the error (e.g., show a message or redirect)
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task ShowDetails(Guid bookId)
+    {
+        var userId = await dataService.GetItemAsync<Guid>("UserId");
+        var readers = await ReaderDataService.GetReaderByBookIdAndUserIdAsync(bookId, userId);
+        Console.WriteLine($"{readers.Reader.ReaderId}");
+        SelectedReader = readers.Reader;
+        if (readers != null )
+        {
+           
+            Console.WriteLine($"StartDate: {SelectedReader.StartDate}");
+            IsModalVisible = true;
+        }
+    }
+
+    private void CloseModal()
+    {
+        IsModalVisible = false;
+    }
+
+    private void NavigateToBook(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
+}

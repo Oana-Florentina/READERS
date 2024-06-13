@@ -1,6 +1,6 @@
 ﻿namespace Lunatic.UI.Services.Responses.Reader
 {
-    public class AddReaderToUserResponse
+    public class AddReaderToUserResponse : Response
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
