@@ -16,6 +16,7 @@ namespace Lunatic.Application.Features.Users.Payload {
         public List<Guid> FavoriteIds { get;  set; } = default!;
         public List<Guid> BookClubIds { get; set; } = default!;
         public List<Guid> FriendsIds { get; set; } = default!;
+        public List<Guid> FriendsRequests { get; set; } = default!;
 
     }
 }
