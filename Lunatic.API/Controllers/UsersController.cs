@@ -85,13 +85,16 @@ namespace Lunatic.API.Controllers {
         [Produces("application/json")]
         [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status201Created)]
         [ProducesResponseType<AddWantToReadCommandResponse>(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddWantToRead(Guid userId, Guid bookId)
+        public async Task<IActionResult> AddWantToRead(Guid userId, AddWantToReadCommand command)
         {
-            var command = new AddWantToReadCommand
+            if (userId != command.UserId)
             {
-                UserId = userId,
-                BookId = bookId
-            };
+                return BadRequest(new AddWantToReadCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }
+                });
+            }
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
@@ -99,6 +102,7 @@ namespace Lunatic.API.Controllers {
             }
             return Ok(result);
         }
+
 
         [HttpGet("{userId}/wantToRead")]
         [Produces("application/json")]

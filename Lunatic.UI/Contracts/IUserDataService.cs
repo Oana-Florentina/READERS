@@ -1,5 +1,6 @@
 ﻿using Lunatic.UI.Services.Responses;
 using Lunatic.UI.Services.Responses.Reader;
+using Lunatic.UI.Services.Responses.WantToRead;
 using Lunatic.UI.ViewModels;
 
 namespace Lunatic.UI.Contracts
@@ -12,5 +13,6 @@ namespace Lunatic.UI.Contracts
         Task<List<BookViewModel>> GetBooksIWantToReadByIdsAsync(Guid userId);
         Task<List<BookViewModel>> GetBooksIReadByIdsAsync(Guid userId);
         Task<AddReaderToUserResponse> AddReaderToUserAsync(Guid userId, Guid readerId);
+        Task<AddWantToReadResponse> AddWantToReadAsync(Guid userId, Guid bookId);
     }
 }

@@ -2,6 +2,7 @@
 using Lunatic.UI.Payload;
 using Lunatic.UI.Services.Responses;
 using Lunatic.UI.Services.Responses.Reader;
+using Lunatic.UI.Services.Responses.WantToRead;
 using Lunatic.UI.ViewModels;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -149,6 +150,49 @@ namespace Lunatic.UI.Services
                 throw;
             }
         }
+        public async Task<AddWantToReadResponse> AddWantToReadAsync(Guid userId, Guid bookId)
+        {
+            try
+            {
+                // Set Authorization Header
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+                // Create the payload for the API request
+                var command = new
+                {
+                    UserId = userId,
+                    BookId = bookId
+                };
+
+                // Send the POST request
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/{userId}/wantToRead", command);
+
+                // Read the response content
+                var content = await result.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response: {content}");
+
+                // Check if the request was successful
+                if (!result.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error in AddWantToReadAsync call.");
+                    throw new ApplicationException($"API Error: {result.StatusCode} - {content}");
+                }
+
+                // Deserialize the response
+                var response = JsonSerializer.Deserialize<AddWantToReadResponse>(content,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                // Log exception details
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
+        }
+
 
 
 
