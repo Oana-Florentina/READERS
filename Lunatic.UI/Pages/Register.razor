@@ -4,48 +4,70 @@
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
 
-<h1 class="h2 font-weight-normal register-title">
-    Register
-</h1>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css\login.css">
+    <title>Register</title>
+</head>
 
-<EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
-    <DataAnnotationsValidator />
-    <label for="inputFirstName" class="sr-only">FirstName</label>
-    <InputText id="inputFirstName" class="form-control" @bind-Value="registerRequest.FirstName" autofocus placeholder="FirstName" />
-    <ValidationMessage For="@(() => registerRequest.FirstName)" />
+<body>
+    <div class="login__card">
+        <div class="login__intro">
+            <h2>Welcome!</h2>
+            <h4>Enter Your Details to Create an Account</h4>
+        </div>
+        <div class="login__form">
+            <h1 class="login__heading">Sign Up to Access Your Account</h1>
+            <EditForm class="form-signin" OnValidSubmit="OnSubmit" Model="registerRequest">
+                <DataAnnotationsValidator />
 
-    <label for="inputLastName" class="sr-only">LastName</label>
-        <InputText id="inputLastName" class="form-control" @bind-Value="registerRequest.LastName" autofocus placeholder="LastName" />
-    <ValidationMessage For="@(() => registerRequest.LastName)" />
+                <p>
+                    <label for="inputFirstName" class="sr-only">First Name</label>
+                    <InputText id="inputFirstName" class="form-control" @bind-Value="registerRequest.FirstName" placeholder="First Name" />
+                    <ValidationMessage For="@(() => registerRequest.FirstName)" />
+                </p>
+                <p>
+                    <label for="inputLastName" class="sr-only">Last Name</label>
+                    <InputText id="inputLastName" class="form-control" @bind-Value="registerRequest.LastName" placeholder="Last Name" />
+                    <ValidationMessage For="@(() => registerRequest.LastName)" />
+                </p>
+                <p>
+                    <label for="inputEmail" class="sr-only">Email</label>
+                    <InputText id="inputEmail" class="form-control" @bind-Value="registerRequest.Email" placeholder="Email" />
+                    <ValidationMessage For="@(() => registerRequest.Email)" />
+                </p>
+                <p>
+                    <label for="inputUsername" class="sr-only">Username</label>
+                    <InputText id="inputUsername" class="form-control" @bind-Value="registerRequest.Username" placeholder="Username" />
+                    <ValidationMessage For="@(() => registerRequest.Username)" />
+                </p>
+                <p>
+                    <label for="inputPassword" class="sr-only">Password</label>
+                    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
+                    <ValidationMessage For="@(() => registerRequest.Password)" />
+                </p>
+                <p>
+                    <label for="inputConfirmPassword" class="sr-only">Confirm Password</label>
+                    <InputText type="password" id="inputConfirmPassword" class="form-control" placeholder="Confirm Password" @bind-Value="registerRequest.ConfirmPassword" />
+                    <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
+                </p>
 
-    <label for="inputEmail" class="sr-only">Email</label>
-        <InputText id="inputEmail" class="form-control" @bind-Value="registerRequest.Email" autofocus placeholder="Email" />
-    <ValidationMessage For="@(() => registerRequest.Email)" />
-    
-
-    <label for="inputUsername" class="sr-only">Username</label>
-    <InputText id="inputUsername" class="form-control" @bind-Value="registerRequest.Username" autofocus placeholder="Username" />
-    <ValidationMessage For="@(() => registerRequest.Username)" />
-
-    <label for="inputPassword" class="sr-only">Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.Password" />
-    <ValidationMessage For="@(() => registerRequest.Password)" />
-
-    <label for="inputPassword" class="sr-only">Confirm Password</label>
-    <InputText type="password" id="inputPassword" class="form-control" placeholder="Password" @bind-Value="registerRequest.ConfirmPassword" />
-    <ValidationMessage For="@(() => registerRequest.ConfirmPassword)" />
-
-
-    <br />
-
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
-
-    <label class="text-danger">@error</label>
-
-    <NavLink href="login">
-        <h6 class="font-weight-normal text-center">Already have an account</h6>
-    </NavLink>
-</EditForm>
+                <p>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                </p>
+                @if (!string.IsNullOrEmpty(error))
+                {
+                    <div class="text-danger">
+                        <p>@error</p>
+                    </div>
+                }
+            </EditForm>
+            <div class="login__helper">
+                <span class="create__account">Already have an account? <a href="/login">Sign In</a></span>
+            </div>
+        </div>
+    </div>
+</body>
 
 @code {
     RegisterViewModel registerRequest { get; set; } = new RegisterViewModel();

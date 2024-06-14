@@ -8,10 +8,12 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
     internal class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
     {
         private readonly IBookRepository bookRepository;
+        private readonly ICoverRepository coverRepository;
 
-        public CreateBookCommandValidator(IBookRepository bookRepository)
+        public CreateBookCommandValidator(IBookRepository bookRepository, ICoverRepository coverRepository)
         {
             this.bookRepository = bookRepository;
+            this.coverRepository = coverRepository;
 
             RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Title is required.")
@@ -26,8 +28,8 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
                 .NotEmpty().WithMessage("Year is required.")
                 .InclusiveBetween(0, 2100).WithMessage("Year must be between 0 and 2100.");
           
-            RuleFor(x => x.Cover)
-                .NotEmpty().WithMessage("Cover is required.");
+            
+            
 
             ClassLevelCascadeMode = CascadeMode.Stop;
 

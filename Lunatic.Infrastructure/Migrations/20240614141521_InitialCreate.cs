@@ -23,11 +23,24 @@ namespace Lunatic.Infrastructure.Migrations
                     Genres = table.Column<int[]>(type: "integer[]", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Ratings = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
-                    Cover = table.Column<Guid>(type: "uuid", nullable: false)
+                    Cover = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Books", x => x.BookId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CoverImages",
+                columns: table => new
+                {
+                    CoverImageId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CoverImages", x => x.CoverImageId);
                 });
 
             migrationBuilder.CreateTable(
@@ -145,6 +158,9 @@ namespace Lunatic.Infrastructure.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Books");
+
+            migrationBuilder.DropTable(
+                name: "CoverImages");
 
             migrationBuilder.DropTable(
                 name: "FriendRequest");

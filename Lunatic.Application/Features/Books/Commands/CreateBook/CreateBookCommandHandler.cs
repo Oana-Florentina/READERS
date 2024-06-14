@@ -2,9 +2,7 @@
 using Lunatic.Domain.Entities;
 using Lunatic.Application.Features.Books.Payload;
 using MediatR;
-using Lunatic.Application.Features.Books.Queries.GetAll;
-using Lunatic.Application.Features.Users.Commands.CreateUser;
-using Lunatic.Application.Features.Users.Payload;
+
 
 
 namespace Lunatic.Application.Features.Books.Commands.CreateBook
@@ -12,16 +10,18 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
     public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, CreateBookCommandResponse>
     {
         private readonly IBookRepository bookRepository;
+        private readonly ICoverRepository coverRepository;
 
-        public CreateBookCommandHandler(IBookRepository bookRepository)
+        public CreateBookCommandHandler(IBookRepository bookRepository, ICoverRepository  coverRepository)
         {
             this.bookRepository = bookRepository;
+                        this.coverRepository = coverRepository;
         }
 
         public async Task<CreateBookCommandResponse> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
 
-            var validator = new CreateBookCommandValidator(this.bookRepository);
+            var validator = new CreateBookCommandValidator(this.bookRepository, this.coverRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validatorResult.IsValid)
@@ -47,6 +47,7 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
                     Description = book.Description,
                     Year = book.Year,
                     Genres = book.Genres,
+                    Cover = book.Cover,
                     Ratings = book.Ratings
                 }
             };

@@ -33,8 +33,9 @@ namespace Lunatic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("Cover")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Cover")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -58,6 +59,24 @@ namespace Lunatic.Infrastructure.Migrations
                     b.HasKey("BookId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Lunatic.Domain.Entities.CoverImage", b =>
+                {
+                    b.Property<Guid>("CoverImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("CoverImageId");
+
+                    b.ToTable("CoverImages");
                 });
 
             modelBuilder.Entity("Lunatic.Domain.Entities.FriendRequest", b =>

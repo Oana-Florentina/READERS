@@ -12,6 +12,6 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
         public int Year { get; set; } = default!;
         public string Description { get; set; } = default!;
        
-        public Guid Cover { get; set; } = default!;
+        public string Cover { get; set; } = default!;
     }
 }

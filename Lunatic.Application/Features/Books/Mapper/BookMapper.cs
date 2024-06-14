@@ -20,7 +20,8 @@ namespace Lunatic.Application.Features.Books.Mapper
                 Author = book.Author,
                 Description = book.Description,
                 Year = book.Year,
-                Ratings = book.Ratings
+                Ratings = book.Ratings,
+                Cover = book.Cover
             };
         }
     }

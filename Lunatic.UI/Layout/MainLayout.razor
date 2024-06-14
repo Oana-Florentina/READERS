@@ -5,10 +5,14 @@
 @inject CustomStateProvider authStateProvider
 @inject ITokenService TokenService
 @inherits LayoutComponentBase
+
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    @if (!IsLoginPage && !IsRegisterPage)
+    {
+        <div class="sidebar">
+            <NavMenu />
+        </div>
+    }
 
     <main>
         <article class="content px-4">
@@ -17,11 +21,13 @@
     </main>
 </div>
 
-@functions {
+@code {
+    private bool IsLoginPage => navigationManager.Uri.EndsWith("/login", StringComparison.OrdinalIgnoreCase);
+    private bool IsRegisterPage => navigationManager.Uri.EndsWith("/register", StringComparison.OrdinalIgnoreCase);
     protected override async Task OnInitializedAsync()
     {
         var token = await TokenService.GetTokenAsync();
-        if (token == null)
+        if (token == null && !IsLoginPage)
         {
             navigationManager.NavigateTo("/login");
         }
