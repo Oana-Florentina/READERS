@@ -2,6 +2,7 @@
 @using Lunatic.UI.Contracts
 @using Lunatic.UI.ViewModels
 @inject IUserDataService UserDataService
+@inject IDataService dataService
 
 <h3>Users</h3>
 
@@ -19,11 +20,11 @@ else if (!FilteredUsers.Any())
 }
 else
 {
-    <table>
+    <table class="table table-responsive table-striped">
         <thead>
             <tr>
                 <th>Username</th>
-                
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -31,7 +32,9 @@ else
             {
                 <tr>
                     <td>@user.Username</td>
-                 
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => SendFriendRequest(user.UserId)">Send Friend Request</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -43,11 +46,36 @@ else
     private List<UserViewModel> UsersList = new();
     private List<UserViewModel> FilteredUsers =>
         string.IsNullOrEmpty(searchTerm)
-            ? UsersList
-            : UsersList.Where(u => u.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+            ? UsersList.Where(u => u.UserId != CurrentUserId).ToList()
+            : UsersList.Where(u => u.UserId != CurrentUserId && u.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    private Guid CurrentUserId;
 
     protected override async Task OnInitializedAsync()
     {
-        UsersList = (await UserDataService!.GetUsersAsync()).ToList();
+        CurrentUserId = await dataService.GetItemAsync<Guid>("UserId"); // Getting the current user's ID
+        Console.WriteLine($"CurrentUserId: {CurrentUserId}");
+        UsersList = (await UserDataService.GetUsersAsync()).ToList();
+    }
+
+    private async Task SendFriendRequest(Guid receiverId)
+    {
+        var response = await UserDataService.SendFriendRequestAsync(CurrentUserId, receiverId);
+        if (response.Success)
+        {
+            // Handle success (e.g., show a notification)
+            Console.WriteLine("Friend request sent successfully.");
+        }
+        else
+        {
+            // Handle failure (e.g., show error messages)
+            Console.WriteLine("Failed to send friend request.");
+            if (response.ValidationErrors != null)
+            {
+                foreach (var error in response.ValidationErrors)
+                {
+                    Console.WriteLine($"Validation Error: {error}");
+                }
+            }
+        }
     }
 }

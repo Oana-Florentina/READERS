@@ -14,6 +14,7 @@ using Lunatic.Application.Features.Projects.Commands.UpdateProjectTasksSection;
 using Lunatic.Domain.Entities;
 using Lunatic.Application.Features.Users.Commands.AddFavorite;
 using Lunatic.Application.Features.Users.Commands.SendFriendRequest;
+using Lunatic.Application.Features.Users.Queries.GetFriendsRequests;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -214,6 +215,19 @@ namespace Lunatic.API.Controllers {
                 return BadRequest(result);
             }
             return Ok(result);
+        }
+        [HttpGet("{userId}/getFriendRequest")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetFriendsRequestsQueryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetFriendsRequestsQueryResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetFriendsRequests(Guid userId)
+        {
+            var result = await Mediator.Send(new GetFriendsRequestsQuery(userId));
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result.FriendRequest);
         }
 
 

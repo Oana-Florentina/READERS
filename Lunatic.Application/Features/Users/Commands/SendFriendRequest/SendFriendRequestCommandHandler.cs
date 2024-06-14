@@ -37,7 +37,7 @@ namespace Lunatic.Application.Features.FriendRequests.Commands.SendFriendRequest
                     ValidationErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
                 };
             }
-            var userResult = await this.userRepository.FindByIdAsync(request.SenderId);
+            var userResult = await this.userRepository.FindByIdAsync(request.ReceiverId);
          
 
             var friendRequest = new FriendRequest(
