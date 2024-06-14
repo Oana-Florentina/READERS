@@ -1,43 +1,73 @@
-﻿/* Styles for the search bar */
-.search-bar {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+﻿.books-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
 }
 
-/* Styles for nested table */
-.nested-table {
-    width: 100%;
-    border-collapse: collapse;
+.book-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+    padding: 10px;
+    height: 300px;
+    font-size: 10px;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+    .book-card img {
+        width: 100px;
+        align-self: center;
+        height: 150px;
+        margin-bottom: 10px;
+    }
+
+.book-details {
+    justify-content:center
+    
+}
+
+.book-card h5 {
+    font-size: 1.1em;
+    margin: 5px 0;
+}
+
+.book-card p {
+    margin: 3px 0;
+}
+
+.card-footer {
     margin-top: 10px;
 }
 
-    .nested-table th, .nested-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-
-/* Additional table styling */
-.table {
+.book-card button {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+}
+.book-card button {
+    width: 70%;
 }
 
-    .table th, .table td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: left;
-    }
-
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f9f9f9;
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+    color: #333;
 }
 
-.table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+input.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }

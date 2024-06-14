@@ -30,6 +30,7 @@ else
 
         <!-- Action Buttons -->
         <button class="btn btn-primary" @onclick="EditProfile">Edit Profile</button>
+        <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToLogin">Logout</button>
     </div>
 }
 
@@ -63,5 +64,9 @@ else
     private void EditProfile()
     {
         NavigationManager.NavigateTo($"/editProfile");
+    }
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
     }
 }

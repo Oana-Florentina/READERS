@@ -13,5 +13,6 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
         public string Description { get; set; } = default!;
        
         public string Cover { get; set; } = default!;
+        public List<Genre> Genres { get; set; } = default!;
     }
 }

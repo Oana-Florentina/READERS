@@ -1,24 +1,129 @@
-﻿.book-details {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+﻿.book-details-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
-    .book-details h4 {
-        margin-bottom: 10px;
-    }
+.book-cover {
+    flex: 0 0 auto;
+}
 
-    .book-details p {
-        margin: 5px 0;
-    }
+.book-cover img.book-cover-image {
+    width: 200px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
 
-    .book-details ul {
-        padding-left: 20px;
-    }
+.book-info {
+    flex: 1;
+}
 
-    .book-details button {
-        margin-right: 10px;
-        margin-top: 15px;
-    }
+.book-info h4 {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.book-info p {
+    font-size: 1.1em;
+    margin: 10px 0;
+    color: #666;
+}
+
+.book-info strong {
+    color: #333;
+}
+
+.book-details {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: left;
+}
+
+.book-details h5 {
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+.book-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.book-details ul li {
+    margin: 5px 0;
+    font-size: 1em;
+    color: #555;
+}
+
+.book-details .btn {
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 1em;
+}
+
+.modal.show {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+    max-width: 600px;
+    margin: 100px auto;
+}
+
+.modal-content {
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.modal-title {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+}
+
+.modal-body {
+    padding: 20px 0;
+}
+
+.modal-body .form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.modal-body .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}

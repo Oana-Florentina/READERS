@@ -57,6 +57,7 @@ namespace Lunatic.UI.Services
                 Author = book.Book.Author,
                 AverageScore = book.Book.AverageScore,
                 Year = book.Book.Year,
+                Cover = book.Book.Cover,
                 Description = book.Book.Description,
                 Ratings = book.Book.Ratings,
 

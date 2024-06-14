@@ -7,10 +7,10 @@
 @inject IReaderDataService ReaderDataService
 @inject IRatingDataService RatingDataService
 
-
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css\bookDetails.css">
+    <link rel="stylesheet" href="css/bookDetails.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>Book details</title>
 </head>
 
@@ -23,6 +23,7 @@
 else
 {
     <div class="book-details">
+        <img src="@Book.Cover" alt="Book cover" class="book-cover">
         <h4>@Book.Title</h4>
         <p><strong>Author:</strong> @Book.Author</p>
         <p><strong>Year:</strong> @Book.Year</p>
@@ -121,10 +122,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"BookId: {bookId}");
+        
         if (bookId != Guid.Empty)
         {
             Book = await BookDataService.GetBookByIdAsync(bookId);
+            Console.WriteLine($"BookId: {bookId}");
+        Console.WriteLine($"cover: {Book?.Cover}");
+        Console.WriteLine($"Title: {Book?.Title}");
+        Console.WriteLine($"{Book}");
             Console.WriteLine($"Book: {Book?.Title}");
             if (Book == null)
             {
@@ -136,7 +141,6 @@ else
             NavigationManager.NavigateTo("/404");
         }
     }
-
 
     private void OpenReadBooksModal()
     {
@@ -203,17 +207,13 @@ else
                 {
                     Console.WriteLine("Rating added successfully.");
                     var createdRating = createdRatingResponse.Rating;
-                    Console.WriteLine($"flory");
                     ratingId = createdRating.RatingId;
-                    Console.WriteLine($"RatingId: {ratingId}");
                 }
                 else
                 {
                     Console.WriteLine("Failed to add rating.");
                 }
             }
-
-
 
             // Create the reader with the provided details
             var reader = new ReaderViewModel
@@ -227,12 +227,9 @@ else
                     IsFavorite = IsFavorite
                 };
 
-
             var addedReader = await ReaderDataService.AddReaderAsync(reader);
             if(addedReader.Success)
             {  
-                Console.WriteLine($"Reader added successfully: {addedReader.Reader.ReaderId}");
-                Console.WriteLine($"UserId: {userId}");
                 var addReaderToUser = await UserDataService.AddReaderToUserAsync(userId, addedReader.Reader.ReaderId);
                 Console.WriteLine($"Reader added to user: {addReaderToUser.Success}");
             }

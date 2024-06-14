@@ -33,7 +33,7 @@ namespace Lunatic.Application.Features.Books.Commands.CreateBook
                 };
             }
 
-            var book = new Book(request.Title, request.Author, request.Year, request.Description, request.Cover);
+            var book = new Book(request.Title, request.Author, request.Year, request.Description, request.Cover, request.Genres);
             await this.bookRepository.AddAsync(book);
 
             return new CreateBookCommandResponse

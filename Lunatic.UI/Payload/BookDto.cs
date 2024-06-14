@@ -11,5 +11,6 @@ namespace Lunatic.UI.Payload
         public float AverageScore { get; set; } = default!;
         public List<Guid> Ratings { get; set; } = default!;
         public List<Genre> Genres { get; set; } = default!;
+        public string Cover { get; set; } = default!;
     }
 }

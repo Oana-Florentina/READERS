@@ -12,5 +12,6 @@ namespace Lunatic.UI.ViewModels
         public float AverageScore { get; set; }
         public List<Guid>? Ratings { get; set; } 
         public List<Genre>? Genres { get; set; } 
+        public string Cover { get; set; } = string.Empty;
     }
 }
