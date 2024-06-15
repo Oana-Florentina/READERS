@@ -231,7 +231,7 @@ namespace Lunatic.API.Controllers {
             return Ok(result.FriendRequest);
         }
 
-        [HttpDelete("deleteFriendRequest/{requestId}")]
+        [HttpDelete("FriendRequest/{requestId}")]
         [Produces("application/json")]
         [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status404NotFound)]

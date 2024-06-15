@@ -21,6 +21,6 @@ namespace Lunatic.UI.Contracts
         Task<AddToFavoritesResponse> AddToFavoritesAsync(Guid userId, Guid bookId);
         Task<SendFriendRequestCommandResponse> SendFriendRequestAsync(Guid senderId, Guid receiverId);
         Task<List<FriendRequestViewModel>> GetFriendRequestsByUserIdAsync(Guid userId);
-
+        Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status);
     }
 }

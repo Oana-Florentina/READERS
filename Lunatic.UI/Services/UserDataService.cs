@@ -333,7 +333,7 @@ namespace Lunatic.UI.Services
             httpClient.DefaultRequestHeaders.Authorization
                 = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
 
-            var result = await httpClient.DeleteAsync($"{RequestUri}/deletefriendrequest/{requestId}?status={status}");
+            var result = await httpClient.DeleteAsync($"{RequestUri}/friendrequest/{requestId}?status={status}");
             result.EnsureSuccessStatusCode();
             var response = await result.Content.ReadFromJsonAsync<Response>();
             response!.Success = result.IsSuccessStatusCode;

@@ -55,7 +55,6 @@ namespace Lunatic.Application.Features.FriendRequests.Commands.DeleteFriendReque
             userResult2.Value.RemoveFriendRequest(request.RequestId);
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
             var dbUserResult2 = await this.userRepository.UpdateAsync(userResult2.Value);
-            var dbFriendRequestResult = await this.friendRequestRepository.DeleteAsync(request.RequestId);
 
             return new DeleteFriendRequestCommandResponse
             {

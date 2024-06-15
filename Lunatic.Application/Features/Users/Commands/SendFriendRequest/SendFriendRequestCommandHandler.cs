@@ -9,6 +9,7 @@ using Lunatic.Application.Features.Ratings.Commands.CreateRating;
 using Lunatic.Application.Features.Ratings.Mapper;
 using Lunatic.Application.Features.Users.Mapper;
 using Lunatic.Application.Features.Users.Commands.AddReader;
+using Lunatic.Application.Features.Users.Commands.CreateUser;
 
 
 namespace Lunatic.Application.Features.FriendRequests.Commands.SendFriendRequest
@@ -47,16 +48,21 @@ namespace Lunatic.Application.Features.FriendRequests.Commands.SendFriendRequest
              );
 
             await this.friendRequestRepository.AddAsync(friendRequest);
-
             userResult.Value.AddFriendRequest(friendRequest.FriendRequestId);
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
-
-
             return new SendFriendRequestCommandResponse
             {
                 Success = true,
-                FriendRequest = FriendRequestMapper.MapToFriendRequestDto(friendRequest)
+                FriendRequest = new FriendRequestDto
+                {
+                    FriendRequestId = friendRequest.FriendRequestId,
+                    SenderId = friendRequest.SenderId,
+                    ReceiverId = friendRequest.ReceiverId,
+                    Status = friendRequest.Status
+
+                }
             };
+
         }
     }
 }

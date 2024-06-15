@@ -20,19 +20,19 @@ Welcome to your new app.
                 {
                     <p><em>Loading...</em></p>
                 }
-                else if (FriendRequestSenders == null || !FriendRequestSenders.Any())
+                else if (!FriendRequestSenders.Any())
                 {
                     <p>No friend requests.</p>
                 }
                 else
                 {
                     <div class="notification-box">
-                        @foreach (var sender in FriendRequestSenders)
+                        @foreach (var request in FriendRequests)
                         {
                             <div class="notification-item">
-                                <p><strong>@sender.Username</strong> wants to be your friend!</p>
-                                <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(sender.UserId)">Accept</button>
-                                <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(sender.UserId)">Decline</button>
+                                <p><strong>@FriendRequestSenders[request.SenderId]</strong> wants to be your friend!</p>
+                                <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(request.FriendRequestId)">Accept</button>
+                                <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(request.FriendRequestId)">Decline</button>
                             </div>
                         }
                     </div>
@@ -57,11 +57,11 @@ Welcome to your new app.
     [Inject]
     public IDataService dataService { get; set; }
 
-    private List<ProfileViewModel> FriendRequestSenders { get; set; } = new();
+    private Dictionary<Guid, string> FriendRequestSenders = new();
 
     public List<FriendRequestViewModel> FriendRequests { get; set;} = new();
 
-    private bool isLoading { get; set; } = false;
+    public bool isLoading { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,8 +87,11 @@ Welcome to your new app.
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
             foreach (var request in FriendRequests)
             {
-                var sender = await UserDataService.GetUserByIdAsync(request.SenderId);
-                FriendRequestSenders.Add(sender);
+                var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
+                if (senderProfile != null)
+                {
+                    FriendRequestSenders[request.SenderId] = senderProfile.Username;
+                }
             }
             Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
             await LoadFriendRequests();
@@ -107,7 +110,9 @@ Welcome to your new app.
         try
         {
             var userId = await dataService.GetItemAsync<Guid>("UserId");
-            FriendRequests= (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
+            FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId))
+                            .Where(req => req.ReceiverId == userId)
+                            .ToList();
             Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
         }
         catch (Exception ex)
@@ -130,13 +135,29 @@ Welcome to your new app.
         NavigationManager.NavigateTo("/register");
     }
 
-    private async Task AcceptFriendRequest(Guid senderId)
+    private async Task AcceptFriendRequest(Guid requestId)
     {
-        // Implement the logic to accept the friend request
+        var response = await UserDataService.DeleteFriendRequestAsync(requestId, true);
+        if (response.Success)
+        {
+           
+        }
+        else
+        {
+            Console.WriteLine("Failed to accept friend request: " + response.Message);
+        }
     }
 
-    private async Task DeclineFriendRequest(Guid senderId)
+    private async Task DeclineFriendRequest(Guid requestId)
     {
-        // Implement the logic to decline the friend request
+        var response = await UserDataService.DeleteFriendRequestAsync(requestId, false);
+        if (response.Success)
+        {
+           
+        }
+        else
+        {
+            Console.WriteLine("Failed to decline friend request: " + response.Message);
+        }
     }
 }
