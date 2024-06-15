@@ -340,7 +340,22 @@ namespace Lunatic.UI.Services
             return response!;
         }
 
+        public async Task<List<UserViewModel>> GetFriendsByUserIdAsync(Guid userId)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/friends");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var friends = JsonSerializer.Deserialize<List<UserViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return friends!;
+        }
 
 
 

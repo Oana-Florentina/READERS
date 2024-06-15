@@ -22,5 +22,7 @@ namespace Lunatic.UI.Contracts
         Task<SendFriendRequestCommandResponse> SendFriendRequestAsync(Guid senderId, Guid receiverId);
         Task<List<FriendRequestViewModel>> GetFriendRequestsByUserIdAsync(Guid userId);
         Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status);
+
+        Task<List<UserViewModel>> GetFriendsByUserIdAsync(Guid userId);
     }
 }
