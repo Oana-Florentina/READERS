@@ -13,5 +13,6 @@ namespace Lunatic.UI.ViewModels
         public List<Guid>? Ratings { get; set; } 
         public List<Genre>? Genres { get; set; } 
         public string Cover { get; set; } = string.Empty;
+        public bool IsFavorite { get; set; }
     }
 }

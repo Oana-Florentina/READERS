@@ -259,6 +259,23 @@ namespace Lunatic.UI.Services
 
             return books!;
         }
+        public async Task<bool> IsBookFavorite(Guid userId, Guid bookId)
+        {
+            try
+            {
+                // Fetch all favorite books for the user
+                var favoriteBooks = await GetFavsByUserIdAsync(userId);
+
+                // Check if the specific bookId is in the list of favorites
+                return favoriteBooks.Any(book => book.BookId == bookId);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error checking favorite status: {ex.Message}");
+                return false;  // In case of an error, assume not favorite for safety or handle accordingly
+            }
+        }
+
 
         public async Task<SendFriendRequestCommandResponse> SendFriendRequestAsync(Guid senderId, Guid receiverId)
         {
