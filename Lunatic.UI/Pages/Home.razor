@@ -140,7 +140,17 @@ Welcome to your new app.
         var response = await UserDataService.DeleteFriendRequestAsync(requestId, true);
         if (response.Success)
         {
-           
+            // Remove the accepted request from the local state
+            FriendRequests.RemoveAll(r => r.FriendRequestId == requestId);
+            // If you are using a dictionary or separate list for display, update it as well
+            var request = FriendRequests.FirstOrDefault(r => r.FriendRequestId == requestId);
+            if (request != null)
+            {
+                FriendRequestSenders.Remove(request.SenderId);
+            }
+
+            StateHasChanged(); // Notify Blazor that the UI needs to be updated
+            Console.WriteLine("Friend request accepted.");
         }
         else
         {
@@ -148,16 +158,28 @@ Welcome to your new app.
         }
     }
 
+
     private async Task DeclineFriendRequest(Guid requestId)
     {
         var response = await UserDataService.DeleteFriendRequestAsync(requestId, false);
         if (response.Success)
         {
-           
+            // Remove the request from the local state
+            FriendRequests.RemoveAll(r => r.FriendRequestId == requestId);
+            // Also remove from the sender list if using a dictionary or separate list for display
+            var request = FriendRequests.FirstOrDefault(r => r.FriendRequestId == requestId);
+            if (request != null)
+            {
+                FriendRequestSenders.Remove(request.SenderId);
+            }
+
+            StateHasChanged(); // Trigger a UI refresh
+            Console.WriteLine("Friend request declined.");
         }
         else
         {
             Console.WriteLine("Failed to decline friend request: " + response.Message);
         }
     }
+
 }
