@@ -60,6 +60,17 @@ namespace Lunatic.Domain.Entities {
         {
             FriendsRequests.Add(RequestId);
         }
+        public void DeleteFriendRequest(Guid friendId, bool status)
+        {
+            if (status)
+            {
+                FriendsIds.Add(friendId);
+            }
+        }
+        public void RemoveFriendRequest(Guid requestId)
+        {
+            FriendsRequests.Remove(requestId);
+        }
 
 
     }
