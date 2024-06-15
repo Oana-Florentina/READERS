@@ -36,7 +36,7 @@ namespace Lunatic.Application.Features.Users.Queries.GetFavsByUserId
             }
 
             var user = userResult.Value;
-            var wantToReadBookIds = user.WantToReadIds;
+            var wantToReadBookIds = user.FavoriteIds;
 
             if (wantToReadBookIds == null || !wantToReadBookIds.Any())
             {

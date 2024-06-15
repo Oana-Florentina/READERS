@@ -121,35 +121,34 @@ else
         }
     }
     private async Task AddToFavorites(Guid bookId)
+{
+    try
     {
-        try
-        {
-            var userId = await dataService.GetItemAsync<Guid>("UserId");
-            Console.WriteLine($"UserId: {userId}");
-            Console.WriteLine($"BookId: {bookId}");
+        var userId = await dataService.GetItemAsync<Guid>("UserId");
+        Console.WriteLine($"UserId: {userId}");
+        Console.WriteLine($"BookId: {bookId}");
 
-            var addWantToFavoritesResponse = await UserDataService.AddToFavoritesAsync(userId, bookId);
-            if (addWantToFavoritesResponse.Success)
+        var addWantToFavoritesResponse = await UserDataService.AddToFavoritesAsync(userId, bookId);
+        if (addWantToFavoritesResponse.Success)
+        {
+        }
+        else
+        {
+            if (addWantToFavoritesResponse.ValidationErrors != null)
             {
-            }
-            else
-            {
-                if (addWantToFavoritesResponse.ValidationErrors != null)
+                foreach (var error in addWantToFavoritesResponse.ValidationErrors)
                 {
-                    foreach (var error in addWantToFavoritesResponse.ValidationErrors)
-                    {
-                        Console.WriteLine($"Validation Error: {error}");
-                    }
+                    Console.WriteLine($"Validation Error: {error}");
                 }
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error adding book to Want to Read list: {ex.Message}");
-            // Handle error (e.g., show a message to the user)
-        }
     }
-
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error adding book to Want to Read list: {ex.Message}");
+        // Handle error (e.g., show a message to the user)
+    }
+}
     private void CloseModal()
     {
         IsModalVisible = false;
@@ -167,6 +166,7 @@ else
 
     private async Task ToggleFavorite(BookViewModel book)
     {
+        Console.WriteLine($"Toggling favorite for book: {book.Title}");
         if (book.IsFavorite)
         {
             // Call API to remove from favorites
@@ -174,6 +174,9 @@ else
         }
         else
         {
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+            Console.WriteLine($"UserId: {userId}");
+
             var response = await UserDataService.AddToFavoritesAsync(userId, book.BookId);
             if (response.Success)
             {
