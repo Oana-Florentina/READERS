@@ -2,6 +2,7 @@
 @using Lunatic.UI.Contracts
 @using Microsoft.AspNetCore.Components.Authorization
 @using Lunatic.UI.ViewModels
+@inject ITokenService TokenService
 
 <PageTitle>Home</PageTitle>
 
@@ -64,11 +65,35 @@ Welcome to your new app.
 
     protected override async Task OnInitializedAsync()
     {
-        var userId = await dataService.GetItemAsync<Guid>("UserId");
-        FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
-        Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
-        await LoadFriendRequests();
+        try
+        {
+            var token = await TokenService.GetTokenAsync();
+            Console.WriteLine($"Token: {token}");
+            if (string.IsNullOrEmpty(token))  // More explicit check for both null and empty strings
+            {
+                Console.WriteLine("No token found, navigating to login.");
+                NavigationManager.NavigateTo("/login", forceLoad: true);  // forceLoad ensures a full page reload if needed
+                return;  // Important to return to avoid executing further code
+            }
+
+            // If token exists, proceed to load user-specific data
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+            if (userId == Guid.Empty)
+            {
+                Console.WriteLine("No UserId found, additional handling could be here.");
+            }
+
+            FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
+            Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
+            await LoadFriendRequests();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during initialization: {ex.Message}");
+            // Optional: Navigate to an error page or display an error message
+        }
     }
+
 
     private async Task LoadFriendRequests()
     {

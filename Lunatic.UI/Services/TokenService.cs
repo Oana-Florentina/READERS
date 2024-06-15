@@ -25,15 +25,17 @@ namespace Lunatic.UI.Services
 
         public async Task<string> GetTokenAsync()
         {
-            var token = await localStorageService.GetItemAsync<string>(TOKEN);
+            var token = await localStorageService.GetItemAsync<string>("token");  // Ensure that the token key is correctly referenced.
 
             if (string.IsNullOrEmpty(token))
             {
-                throw new InvalidOperationException("Token not found in local storage.");
+                // Return null instead of throwing an exception.
+                return null;
             }
 
             return token;
         }
+
 
         public async Task RemoveTokenAsync()
         {

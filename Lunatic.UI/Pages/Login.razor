@@ -1,8 +1,11 @@
 ﻿@page "/login"
 @using Lunatic.UI.Auth
 @using Lunatic.UI.ViewModels
+@using Lunatic.UI.Contracts
+@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager navigationManager
 @inject CustomStateProvider authStateProvider
+@inject ITokenService TokenService
 
 <head>
     <meta charset="UTF-8">
@@ -47,7 +50,15 @@
 @code {
     LoginViewModel loginRequest { get; set; } = new LoginViewModel();
     string error { get; set; }
-
+    protected override async Task OnInitializedAsync()
+    {
+        var token = await TokenService.GetTokenAsync();
+        
+        Console.WriteLine($"Token: {token}");
+        await TokenService.RemoveTokenAsync();
+        Console.WriteLine($"Token: {token}");
+       
+    }
     async Task OnSubmit()
     {
         error = null;
