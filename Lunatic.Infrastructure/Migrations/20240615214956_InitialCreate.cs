@@ -20,7 +20,7 @@ namespace Lunatic.Infrastructure.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Author = table.Column<string>(type: "text", nullable: false),
                     Year = table.Column<int>(type: "integer", nullable: false),
-                    Genres = table.Column<int[]>(type: "integer[]", nullable: false),
+                    Genres = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Ratings = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
                     Cover = table.Column<string>(type: "text", nullable: false)

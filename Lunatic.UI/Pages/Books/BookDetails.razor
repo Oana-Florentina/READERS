@@ -29,35 +29,9 @@ else
         <p><strong>Year:</strong> @Book.Year</p>
         <p><strong>Description:</strong> @Book.Description</p>
         <p><strong>Average Score:</strong> @Book.AverageScore</p>
-        <p>
-            <strong>Genres:</strong>
-            @if (Book.Genres != null && Book.Genres.Any())
-            {
-                @foreach (var genre in Book.Genres)
-                {
-                    @genre.ToString() <span>,</span>
-                }
-            }
-            else
-            {
-                <span>No genres available</span>
-            }
-        </p>
+        <p><strong>Genres:</strong> @Book.Genres</p>
 
-        <h5>Ratings</h5>
-        @if (Book.Ratings != null && Book.Ratings.Any())
-        {
-            <ul>
-                @foreach (var rating in Book.Ratings)
-                {
-                    <li>@rating</li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>No ratings available.</p>
-        }
+        
 
         <!-- Action Buttons -->
         <button class="btn btn-success" @onclick="AddToWantToRead">Add to Want to Read</button>
@@ -131,6 +105,7 @@ else
         Console.WriteLine($"Title: {Book?.Title}");
         Console.WriteLine($"{Book}");
             Console.WriteLine($"Book: {Book?.Title}");
+            Console.WriteLine($"Book: {Book?.Genres}");
             if (Book == null)
             {
                 NavigationManager.NavigateTo("/404");

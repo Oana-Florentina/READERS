@@ -60,6 +60,7 @@ namespace Lunatic.UI.Services
                 Cover = book.Book.Cover,
                 Description = book.Book.Description,
                 Ratings = book.Book.Ratings,
+                Genres = book.Book.Genres,
 
             };
             

@@ -1,12 +1,12 @@
 ﻿@using Lunatic.UI.Contracts
-
+@inject IUserDataService UserDataService
 <head>
     <link rel="stylesheet" href="css/navbar.css">
 </head>
 
 <div class="top-row ps-3 navbar navbar-dark bg-custom">
     <div class="container-fluid">
-        <a class="navbar-brand text-light" href="">Lunatic.App</a>
+        <a class="navbar-brand text-light" href="profile">@username</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -60,9 +60,26 @@
 </div>
 
 @code {
+    [Inject]
+    public IDataService dataService { get; set; }
+    private string? username;
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = await dataService.GetItemAsync<Guid>("UserId");
+        if (userId != Guid.Empty)
+        {
+            var user = await UserDataService.GetUserByIdAsync(userId);
+            username = user.Username; // Assuming Username is a property of the user model
+        }
+        else
+        {
+            username = "Guest"; // Default or guest username
+        }
+    }
 
     private void ToggleNavMenu()
     {

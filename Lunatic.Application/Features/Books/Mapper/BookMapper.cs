@@ -21,7 +21,8 @@ namespace Lunatic.Application.Features.Books.Mapper
                 Description = book.Description,
                 Year = book.Year,
                 Ratings = book.Ratings,
-                Cover = book.Cover
+                Cover = book.Cover,
+                Genres = book.Genres
             };
         }
     }

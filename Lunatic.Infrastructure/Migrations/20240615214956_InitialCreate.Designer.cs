@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lunatic.Infrastructure.Migrations
 {
     [DbContext(typeof(LunaticContext))]
-    [Migration("20240614141521_InitialCreate")]
+    [Migration("20240615214956_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,9 +44,9 @@ namespace Lunatic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int[]>("Genres")
+                    b.Property<string>("Genres")
                         .IsRequired()
-                        .HasColumnType("integer[]");
+                        .HasColumnType("text");
 
                     b.Property<List<Guid>>("Ratings")
                         .IsRequired()

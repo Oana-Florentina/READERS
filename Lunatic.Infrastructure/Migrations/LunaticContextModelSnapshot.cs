@@ -41,9 +41,9 @@ namespace Lunatic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int[]>("Genres")
+                    b.Property<string>("Genres")
                         .IsRequired()
-                        .HasColumnType("integer[]");
+                        .HasColumnType("text");
 
                     b.Property<List<Guid>>("Ratings")
                         .IsRequired()
