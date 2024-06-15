@@ -235,16 +235,14 @@ namespace Lunatic.API.Controllers {
         [Produces("application/json")]
         [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status200OK)]
         [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteFriendRequest(Guid requestId, DeleteFriendRequestCommand command)
+        public async Task<IActionResult> DeleteFriendRequest(Guid requestId, bool status)
         {
-            if (requestId != command.RequestId)
+            var command = new DeleteFriendRequestCommand
             {
-                return BadRequest(new DeleteFriendRequestCommandResponse
-                {
-                    Success = false,
-                    ValidationErrors = new List<string> { "The requestId Path and requestId Body must be equal." }
-                });
-            }
+                RequestId = requestId,
+                Status = status
+            };
+
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
@@ -252,6 +250,7 @@ namespace Lunatic.API.Controllers {
             }
             return Ok(result);
         }
+
     }
 }
 

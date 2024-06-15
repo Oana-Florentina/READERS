@@ -24,7 +24,6 @@ namespace Lunatic.UI.Services
             this.httpClient = httpClient;
             this.tokenService = tokenService;
         }
-
         public async Task<List<UserViewModel>> GetUsersAsync()
         {
             var token = await tokenService.GetTokenAsync();
@@ -42,7 +41,6 @@ namespace Lunatic.UI.Services
 
             return users ?? new List<UserViewModel>();
         }
-
         public async Task<UserViewModel?> GetUserByUsernameAsync(string username)
         {
             var token = await tokenService.GetTokenAsync();
@@ -59,7 +57,6 @@ namespace Lunatic.UI.Services
 
             return user;
         }
-
         public async Task<ProfileViewModel> GetUserByIdAsync(Guid userId)
         {
             var result = await httpClient.GetAsync($"{RequestUri}/{userId}");
@@ -197,7 +194,6 @@ namespace Lunatic.UI.Services
                 throw;
             }
         }
-
         public async Task<AddToFavoritesResponse> AddToFavoritesAsync(Guid userId, Guid bookId)
         {
             try
@@ -240,8 +236,6 @@ namespace Lunatic.UI.Services
                 throw;
             }
         }
-
-
         public async Task<List<BookViewModel>> GetFavsByUserIdAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
@@ -275,8 +269,6 @@ namespace Lunatic.UI.Services
                 return false;  // In case of an error, assume not favorite for safety or handle accordingly
             }
         }
-
-
         public async Task<SendFriendRequestCommandResponse> SendFriendRequestAsync(Guid senderId, Guid receiverId)
         {
             try
@@ -319,7 +311,6 @@ namespace Lunatic.UI.Services
                 throw;
             }
         }
-
         public async Task<List<FriendRequestViewModel>> GetFriendRequestsByUserIdAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
@@ -337,6 +328,18 @@ namespace Lunatic.UI.Services
 
             return friendRequest!;
         }
+        public async Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+                = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+            var result = await httpClient.DeleteAsync($"{RequestUri}/deletefriendrequest/{requestId}?status={status}");
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<Response>();
+            response!.Success = result.IsSuccessStatusCode;
+            return response!;
+        }
+
 
 
 

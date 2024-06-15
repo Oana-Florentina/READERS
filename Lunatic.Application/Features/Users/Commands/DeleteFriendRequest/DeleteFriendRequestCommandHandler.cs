@@ -52,7 +52,7 @@ namespace Lunatic.Application.Features.FriendRequests.Commands.DeleteFriendReque
             userResult.Value.DeleteFriendRequest(receiverId, request.Status);
             userResult2.Value.DeleteFriendRequest(senderId, request.Status);
 
-            userResult.Value.RemoveFriendRequest(request.RequestId);
+            userResult2.Value.RemoveFriendRequest(request.RequestId);
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
             var dbUserResult2 = await this.userRepository.UpdateAsync(userResult2.Value);
             var dbFriendRequestResult = await this.friendRequestRepository.DeleteAsync(request.RequestId);
