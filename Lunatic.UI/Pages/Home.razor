@@ -20,19 +20,19 @@ Welcome to your new app.
                 {
                     <p><em>Loading...</em></p>
                 }
-                else if (FriendRequests == null || !FriendRequests.Any())
+                else if (FriendRequestSenders == null || !FriendRequestSenders.Any())
                 {
                     <p>No friend requests.</p>
                 }
                 else
                 {
                     <div class="notification-box">
-                        @foreach (var sender in FriendRequests)
+                        @foreach (var sender in FriendRequestSenders)
                         {
                             <div class="notification-item">
-                                <p><strong>@sender.SenderId</strong> wants to be your friend!</p>
-                                <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(sender.SenderId)">Accept</button>
-                                <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(sender.SenderId)">Decline</button>
+                                <p><strong>@sender.Username</strong> wants to be your friend!</p>
+                                <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(sender.UserId)">Accept</button>
+                                <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(sender.UserId)">Decline</button>
                             </div>
                         }
                     </div>
@@ -57,7 +57,7 @@ Welcome to your new app.
     [Inject]
     public IDataService dataService { get; set; }
 
-    private List<UserViewModel> FriendRequestSenders { get; set; } = new();
+    private List<ProfileViewModel> FriendRequestSenders { get; set; } = new();
 
     public List<FriendRequestViewModel> FriendRequests { get; set;} = new();
 
@@ -78,12 +78,18 @@ Welcome to your new app.
 
             // If token exists, proceed to load user-specific data
             var userId = await dataService.GetItemAsync<Guid>("UserId");
+            var userName = await UserDataService.GetUserByIdAsync(userId);
             if (userId == Guid.Empty)
             {
                 Console.WriteLine("No UserId found, additional handling could be here.");
             }
 
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
+            foreach (var request in FriendRequests)
+            {
+                var sender = await UserDataService.GetUserByIdAsync(request.SenderId);
+                FriendRequestSenders.Add(sender);
+            }
             Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
             await LoadFriendRequests();
         }
