@@ -46,6 +46,10 @@ namespace Lunatic.Domain.Entities {
         {
             FavoriteIds.Add(BookId);
         }
+        public void RemoveFavorite(Guid BookId)
+        {
+            FavoriteIds.Remove(BookId);
+        }
 
         public void AddReader(Guid UserId, Guid BookId)
         {
