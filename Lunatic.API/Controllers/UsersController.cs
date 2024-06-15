@@ -56,7 +56,7 @@ namespace Lunatic.API.Controllers {
 		[ProducesResponseType<DeleteUserCommandResponse>(StatusCodes.Status200OK)]
 		[ProducesResponseType<DeleteUserCommandResponse>(StatusCodes.Status404NotFound)]
 		public async Task<IActionResult> Delete(Guid userId) {
-			var deleteUserCommand = new DeleteBookCommand() { UserId = userId };
+			var deleteUserCommand = new DeleteUserCommand() { UserId = userId };
 			var result = await Mediator.Send(deleteUserCommand);
 			if (!result.Success) {
 				return NotFound(result);

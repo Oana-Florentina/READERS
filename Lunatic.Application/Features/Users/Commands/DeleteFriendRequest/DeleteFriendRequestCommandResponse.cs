@@ -2,7 +2,7 @@
 
 namespace Lunatic.Application.Features.Users.Commands.DeleteFriendRequest
 {
-    public class DeleteFriendRequestResponse : ResponseBase
+    public class DeleteFriendRequestCommandResponse : ResponseBase
     {
     }
 }
