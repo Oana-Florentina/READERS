@@ -15,6 +15,7 @@ using Lunatic.Domain.Entities;
 using Lunatic.Application.Features.Users.Commands.AddFavorite;
 using Lunatic.Application.Features.Users.Commands.SendFriendRequest;
 using Lunatic.Application.Features.Users.Queries.GetFriendsRequests;
+using Lunatic.Application.Features.Users.Commands.DeleteFriendRequest;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -230,7 +231,27 @@ namespace Lunatic.API.Controllers {
             return Ok(result.FriendRequest);
         }
 
-
+        [HttpDelete("deleteFriendRequest/{requestId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<DeleteFriendRequestCommandResponse>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteFriendRequest(Guid requestId, DeleteFriendRequestCommand command)
+        {
+            if (requestId != command.RequestId)
+            {
+                return BadRequest(new DeleteFriendRequestCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The requestId Path and requestId Body must be equal." }
+                });
+            }
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }
 
