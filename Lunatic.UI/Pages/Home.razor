@@ -3,85 +3,150 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Lunatic.UI.ViewModels
 @inject ITokenService TokenService
+@inject NavigationManager NavigationManager
+@inject IUserDataService UserDataService
+@inject IDataService DataService
+@inject IBookDataService BookDataService
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css\home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
 
+
+   </head>
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-page">
+    <div class="header">
+        <h1>Welcome!</h1>
+        <div class="date">@currentDate</div>
+    </div>
 
-Welcome to your new app.
+    <div class="notifications-section">
+        <button class="notifications-button" @onclick="ToggleFriendRequests">
+            <i class="fas fa-bell"></i> (@FriendRequests.Count)
+        </button>
+        <div class="friend-requests" style="display: @(showFriendRequests ? "block" : "none")">
+            @if (isLoading)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else if (!FriendRequests.Any())
+            {
+                <p>No friend requests.</p>
+            }
+            else
+            {
+                <div class="friend-requests-list">
+                    @foreach (var request in FriendRequests)
+                    {
+                        <div class="friend-request-item">
+                            <p><strong>@FriendRequestSenders[request.SenderId]</strong> wants to be your friend!</p>
+                            <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(request.FriendRequestId)">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(request.FriendRequestId)">
+                                <i class="fas fa-times"></i> Decline
+                            </button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 
-<br />
-<CascadingAuthenticationState>
-    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-        <Authorized>
-            <div>
-                <h3>Friend Requests</h3>
-                @if (isLoading)
+    <div class="quote-section">
+        <div class="quote-container">
+            <blockquote>"Be yourself; everyone else is already taken." - Oscar Wilde</blockquote>
+        </div>
+    </div>
+
+    <div class="for-you-section">
+        <h2>For You</h2>
+        <div class="books-container">
+            @if (RecommendedBooks == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else if (!RecommendedBooks.Any())
+            {
+                <p>No books available.</p>
+            }
+            else
+            {
+                @foreach (var book in RecommendedBooks.Take(3))
                 {
-                    <p><em>Loading...</em></p>
-                }
-                else if (!FriendRequestSenders.Any())
-                {
-                    <p>No friend requests.</p>
-                }
-                else
-                {
-                    <div class="notification-box">
-                        @foreach (var request in FriendRequests)
-                        {
-                            <div class="notification-item">
-                                <p><strong>@FriendRequestSenders[request.SenderId]</strong> wants to be your friend!</p>
-                                <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(request.FriendRequestId)">Accept</button>
-                                <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(request.FriendRequestId)">Decline</button>
-                            </div>
-                        }
+                    <div class="book-card">
+                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
+                        <div class="book-details">
+                            <h5>@book.Title</h5>
+                            <p>@book.Author</p>
+                            <p>@book.Genres</p>
+                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+                        </div>
                     </div>
                 }
-            </div>
-        </Authorized>
-        <NotAuthorized>
-            <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToLogin">Click here to log in</button>
-            <br />
-            <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToRegister">Click here to register</button>
-        </NotAuthorized>
-    </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
-</CascadingAuthenticationState>
+            }
+        </div>
+    </div>
+
+    <div class="for-you-section">
+        <h2>Popular Now</h2>
+        <div class="books-container">
+            @if (RecommendedBooks == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else if (RecommendedBooks.Count < 3)
+            {
+                <p>Not enough books available for recommendations.</p>
+            }
+            else
+            {
+                @foreach (var book in RecommendedBooks.OrderBy(b => Guid.NewGuid()).Take(3))
+                {
+                    <div class="book-card">
+                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
+                        <div class="book-details">
+                            <h5>@book.Title</h5>
+                            <p>@book.Author</p>
+                            <p>@book.Genres</p>
+                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+
+</div>
 
 @code {
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
-    [Inject]
-    public IAuthenticationService AuthenticationService { get; set; }
-    [Inject]
-    public IUserDataService UserDataService { get; set; }
-    [Inject]
-    public IDataService dataService { get; set; }
-
-    private Dictionary<Guid, string> FriendRequestSenders = new();
-
-    public List<FriendRequestViewModel> FriendRequests { get; set;} = new();
-
-    public bool isLoading { get; set; } = false;
+    private bool showFriendRequests = false;
+    private bool isLoading = false;
+    private DateTime currentDate = DateTime.Now;
+    private List<BookViewModel> RecommendedBooks { get; set; } = new();
+    private Dictionary<Guid, string> FriendRequestSenders { get; set; } = new();
+    private List<FriendRequestViewModel> FriendRequests { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
         try
         {
+            var userId = await DataService.GetItemAsync<Guid>("UserId");
             var token = await TokenService.GetTokenAsync();
-            Console.WriteLine($"Token: {token}");
-            if (string.IsNullOrEmpty(token))  // More explicit check for both null and empty strings
-            {
-                Console.WriteLine("No token found, navigating to login.");
-                NavigationManager.NavigateTo("/login", forceLoad: true);  // forceLoad ensures a full page reload if needed
-                return;  // Important to return to avoid executing further code
-            }
 
-            // If token exists, proceed to load user-specific data
-            var userId = await dataService.GetItemAsync<Guid>("UserId");
-            var userName = await UserDataService.GetUserByIdAsync(userId);
-            if (userId == Guid.Empty)
+            if (string.IsNullOrEmpty(token) || userId == Guid.Empty)
             {
-                Console.WriteLine("No UserId found, additional handling could be here.");
+                NavigationManager.NavigateTo("/login", forceLoad: true);
+                return;
             }
 
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
@@ -93,31 +158,12 @@ Welcome to your new app.
                     FriendRequestSenders[request.SenderId] = senderProfile.Username;
                 }
             }
-            Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
-            await LoadFriendRequests();
+
+            RecommendedBooks = (await BookDataService.GetBooksAsync()).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error during initialization: {ex.Message}");
-            // Optional: Navigate to an error page or display an error message
-        }
-    }
-
-
-    private async Task LoadFriendRequests()
-    {
-        isLoading = true;
-        try
-        {
-            var userId = await dataService.GetItemAsync<Guid>("UserId");
-            FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId))
-                            .Where(req => req.ReceiverId == userId)
-                            .ToList();
-            Console.WriteLine($"FriendRequests: {FriendRequests.Count}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading friend requests: {ex.Message}");
+            Console.WriteLine($"Error loading data: {ex.Message}");
         }
         finally
         {
@@ -125,14 +171,9 @@ Welcome to your new app.
         }
     }
 
-    private void NavigateToLogin()
+    private void ToggleFriendRequests()
     {
-        NavigationManager.NavigateTo("/login");
-    }
-
-    private void NavigateToRegister()
-    {
-        NavigationManager.NavigateTo("/register");
+        showFriendRequests = !showFriendRequests;
     }
 
     private async Task AcceptFriendRequest(Guid requestId)
@@ -140,17 +181,8 @@ Welcome to your new app.
         var response = await UserDataService.DeleteFriendRequestAsync(requestId, true);
         if (response.Success)
         {
-            // Remove the accepted request from the local state
             FriendRequests.RemoveAll(r => r.FriendRequestId == requestId);
-            // If you are using a dictionary or separate list for display, update it as well
-            var request = FriendRequests.FirstOrDefault(r => r.FriendRequestId == requestId);
-            if (request != null)
-            {
-                FriendRequestSenders.Remove(request.SenderId);
-            }
-
-            StateHasChanged(); // Notify Blazor that the UI needs to be updated
-            Console.WriteLine("Friend request accepted.");
+            StateHasChanged();
         }
         else
         {
@@ -158,28 +190,21 @@ Welcome to your new app.
         }
     }
 
-
     private async Task DeclineFriendRequest(Guid requestId)
     {
         var response = await UserDataService.DeleteFriendRequestAsync(requestId, false);
         if (response.Success)
         {
-            // Remove the request from the local state
             FriendRequests.RemoveAll(r => r.FriendRequestId == requestId);
-            // Also remove from the sender list if using a dictionary or separate list for display
-            var request = FriendRequests.FirstOrDefault(r => r.FriendRequestId == requestId);
-            if (request != null)
-            {
-                FriendRequestSenders.Remove(request.SenderId);
-            }
-
-            StateHasChanged(); // Trigger a UI refresh
-            Console.WriteLine("Friend request declined.");
+            StateHasChanged();
         }
         else
         {
             Console.WriteLine("Failed to decline friend request: " + response.Message);
         }
     }
-
+    private void NavigateToBook(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
 }
