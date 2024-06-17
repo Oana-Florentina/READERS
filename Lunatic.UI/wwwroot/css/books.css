@@ -22,6 +22,7 @@
     .book-card img {
         width: 100px;
         height: 150px;
+        align-self: center;
         margin-bottom: 10px;
     }
 

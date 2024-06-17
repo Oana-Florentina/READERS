@@ -1,4 +1,5 @@
-﻿using Lunatic.UI.Services.Responses;
+﻿using Lunatic.Domain.Entities;
+using Lunatic.UI.Services.Responses;
 using Lunatic.UI.Services.Responses.Favorites;
 using Lunatic.UI.Services.Responses.FriendRequest;
 using Lunatic.UI.Services.Responses.Reader;
@@ -22,7 +23,10 @@ namespace Lunatic.UI.Contracts
         Task<SendFriendRequestCommandResponse> SendFriendRequestAsync(Guid senderId, Guid receiverId);
         Task<List<FriendRequestViewModel>> GetFriendRequestsByUserIdAsync(Guid userId);
         Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status);
-
         Task<List<UserViewModel>> GetFriendsByUserIdAsync(Guid userId);
+       
+        Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation);
+
+
     }
 }

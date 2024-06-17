@@ -2,11 +2,11 @@
 @using Lunatic.UI.Contracts
 @using Lunatic.UI.ViewModels
 @inject IUserDataService UserDataService
-@inject IDataService dataService
+@inject IDataService DataService
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css\users.css">
+    <link rel="stylesheet" href="css/users.css">
     <title>Users and Friends</title>
 </head>
 <h3>Users and Friends</h3>
@@ -71,7 +71,6 @@
                                 @if (FriendsList.Any(f => f.UserId == user.UserId))
                                 {
                                     <button class="btn btn-secondary" disabled>Already Friends</button>
-                                    <button class="btn btn-secondary" @onclick="() => RemoveFriend(user.UserId)">Remove</button>
                                 }
                                 else
                                 {
@@ -98,9 +97,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        CurrentUserId = await dataService.GetItemAsync<Guid>("UserId");
+        CurrentUserId = await DataService.GetItemAsync<Guid>("UserId");
         UsersList = (await UserDataService.GetUsersAsync()).ToList();
-        FriendsList = (await UserDataService.GetFriendsByUserIdAsync(CurrentUserId)).ToList();  // Assuming you have a method to fetch friends
+        FriendsList = (await UserDataService.GetFriendsByUserIdAsync(CurrentUserId)).ToList();
     }
 
     private async Task SendFriendRequest(Guid receiverId)
@@ -128,7 +127,6 @@
         else
         {
             Console.WriteLine("Failed to remove friend.");
-        }
-       */
+        }*/
     }
 }

@@ -1,4 +1,5 @@
-﻿using Lunatic.UI.Contracts;
+﻿using Lunatic.Domain.Entities;
+using Lunatic.UI.Contracts;
 using Lunatic.UI.Payload;
 using Lunatic.UI.Services.Responses;
 using Lunatic.UI.Services.Responses.Favorites;
@@ -357,7 +358,18 @@ namespace Lunatic.UI.Services
             return friends!;
         }
 
+       
 
+        public async Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation)
+        {
+            var response = await httpClient.PostAsJsonAsync("api/v1/friendRecommandation", recommandation);
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonSerializer.Deserialize<SendFriendRecommandationResponse>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
+        }
 
 
 
