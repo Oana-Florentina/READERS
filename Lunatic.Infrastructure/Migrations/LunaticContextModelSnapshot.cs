@@ -79,6 +79,29 @@ namespace Lunatic.Infrastructure.Migrations
                     b.ToTable("CoverImages");
                 });
 
+            modelBuilder.Entity("Lunatic.Domain.Entities.FriendRecommandation", b =>
+                {
+                    b.Property<Guid>("FriendRecommandationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FriendRecommandationId");
+
+                    b.ToTable("FriendRecommandation");
+                });
+
             modelBuilder.Entity("Lunatic.Domain.Entities.FriendRequest", b =>
                 {
                     b.Property<Guid>("FriendRequestId")

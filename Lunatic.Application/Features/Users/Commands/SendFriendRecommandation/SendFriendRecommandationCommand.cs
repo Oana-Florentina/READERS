@@ -9,7 +9,6 @@ namespace Lunatic.Application.Features.Users.Commands.SendFriendRecommandation
 {
     public class SendFriendRecommandationCommand: IRequest <SendFriendRecommandationCommandResponse>
     {
-        public Guid FriendRecommandationId { get; set; }
         public Guid SenderId { get;  set; } 
         public Guid ReceiverId { get;  set; }
         public Guid BookId { get;  set; }

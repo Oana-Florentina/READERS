@@ -44,6 +44,21 @@ namespace Lunatic.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FriendRecommandation",
+                columns: table => new
+                {
+                    FriendRecommandationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReceiverId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FriendRecommandation", x => x.FriendRecommandationId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FriendRequest",
                 columns: table => new
                 {
@@ -161,6 +176,9 @@ namespace Lunatic.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "CoverImages");
+
+            migrationBuilder.DropTable(
+                name: "FriendRecommandation");
 
             migrationBuilder.DropTable(
                 name: "FriendRequest");

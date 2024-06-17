@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lunatic.Infrastructure.Migrations
 {
     [DbContext(typeof(LunaticContext))]
-    [Migration("20240615214956_InitialCreate")]
+    [Migration("20240617161124_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -80,6 +80,29 @@ namespace Lunatic.Infrastructure.Migrations
                     b.HasKey("CoverImageId");
 
                     b.ToTable("CoverImages");
+                });
+
+            modelBuilder.Entity("Lunatic.Domain.Entities.FriendRecommandation", b =>
+                {
+                    b.Property<Guid>("FriendRecommandationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FriendRecommandationId");
+
+                    b.ToTable("FriendRecommandation");
                 });
 
             modelBuilder.Entity("Lunatic.Domain.Entities.FriendRequest", b =>
