@@ -1,5 +1,4 @@
-﻿using Lunatic.Domain.Entities;
-using Lunatic.UI.Contracts;
+﻿using Lunatic.UI.Contracts;
 using Lunatic.UI.Payload;
 using Lunatic.UI.Services.Responses;
 using Lunatic.UI.Services.Responses.Favorites;
@@ -7,6 +6,7 @@ using Lunatic.UI.Services.Responses.FriendRequest;
 using Lunatic.UI.Services.Responses.Reader;
 using Lunatic.UI.Services.Responses.WantToRead;
 using Lunatic.UI.ViewModels;
+using System.Collections.Frozen;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -358,7 +358,34 @@ namespace Lunatic.UI.Services
             return friends!;
         }
 
-       
+        public async Task<List<FriendRecommandationViewModel>> GetFriendRecommandationByUserIdAsync(Guid userId)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
+            var response = await httpClient.GetAsync($"api/v1/friendrecommandation/{userId}");
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<GetFriendRecommandationByReceiverIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            var friendRecommandations = new List<FriendRecommandationViewModel>();
+            foreach (var recommandation in result.FriendRecommandations)
+            {
+                friendRecommandations.Add(new FriendRecommandationViewModel
+                {
+                    FriendRecommandationId = recommandation.FriendRecommandationId,
+                    SenderId = recommandation.SenderId,
+                    ReceiverId = recommandation.ReceiverId,
+                    BookId = recommandation.BookId,
+                });
+            }
+            return friendRecommandations!;
+        }
 
         public async Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation)
         {

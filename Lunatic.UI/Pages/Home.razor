@@ -50,6 +50,20 @@
                             </button>
                         </div>
                     }
+                        @if (!FriendRecommandations.Any())
+                        {
+                            <p>No Friend Recommandations.</p>
+                        }
+                        else
+                        {
+                            @foreach (var request in FriendRecommandations)
+                            {
+                                <div class="friend-request-item">
+                                    <p><strong>@FriendRecommandationSenders[request.SenderId]</strong> has recommended you a book!</p>
+                            <p><strong>Book Title:</strong> @request.BookId</p>
+                           
+                        </div>
+                    }}
                 </div>
             }
         </div>
@@ -132,7 +146,9 @@
     private List<BookViewModel> RecommendedBooks { get; set; } = new();
     private Dictionary<Guid, string> FriendRequestSenders { get; set; } = new();
     private List<FriendRequestViewModel> FriendRequests { get; set; } = new();
-    
+    private List<FriendRecommandationViewModel> FriendRecommandations { get; set; } = new();
+    private Dictionary<Guid, string> FriendRecommandationSenders { get; set; } = new();
+
     public List<BookViewModel> PopularBooks { get; set; } = new();
     public List<BookViewModel> Books { get; set; } = new();
 
@@ -156,7 +172,11 @@
             }
 
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
-            foreach (var request in FriendRequests)
+            FriendRecommandations = await UserDataService.GetFriendRecommandationByUserIdAsync(userId);
+            
+            Console.WriteLine("FriendRecommandation: " + FriendRecommandations.Count);
+
+           foreach (var request in FriendRequests)
             {
                 var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
                 if (senderProfile != null)
@@ -164,6 +184,19 @@
                     FriendRequestSenders[request.SenderId] = senderProfile.Username;
                 }
             }
+
+
+           foreach (var request in FriendRecommandations)
+            {
+                var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
+                Console.WriteLine($"senderProfile:  {request.SenderId}");
+                if (senderProfile != null)
+                {
+                    FriendRecommandationSenders[request.SenderId] = senderProfile.Username;
+                }
+            }
+
+
             PopularBooks = await BookDataService.GetPopularBooksAsync();
             foreach (var book in PopularBooks)
             {
