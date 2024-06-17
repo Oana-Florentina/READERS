@@ -13,13 +13,11 @@ namespace Lunatic.Domain.Entities
             BookClubId = bookClubId;
             Title = title;
             Description = description;
-            Genres = genres;
         }
         public Guid BookClubId { get; private set; }
         public string Title { get; private set; }
         public string Description { get; private set; }
         public List<Guid> Books { get; private set; } = new List<Guid>();
         public List<Guid> Members { get; private set; } = new List<Guid>();
-        public string Genres { get; private set; } 
     }
 }

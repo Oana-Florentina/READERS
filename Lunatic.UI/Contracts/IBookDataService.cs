@@ -8,7 +8,7 @@ namespace Lunatic.UI.Contracts
     {
         Task<List<BookViewModel>> GetBooksAsync();
         Task<BookViewModel> GetBookByIdAsync(Guid bookId);
-
         Task<ApiResponse<BookDto>> CreateBookAsync(BookViewModel bookViewModel);
+        Task<List<BookViewModel>> GetPopularBooksAsync();
     }
 }

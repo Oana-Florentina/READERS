@@ -2,6 +2,7 @@
 using Lunatic.UI.Payload;
 using Lunatic.UI.Services.Responses;
 using Lunatic.UI.ViewModels;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -65,6 +66,56 @@ namespace Lunatic.UI.Services
             };
             
             return bookViewModel!;
+        }
+
+        public async Task<List<BookViewModel>> GetPopularBooksAsync()
+        {
+            try
+            {
+                var readersResponse = await httpClient.GetAsync("api/v1/reader");
+                readersResponse.EnsureSuccessStatusCode();
+                var readersJson = await readersResponse.Content.ReadAsStringAsync();
+
+                var readers = JsonSerializer.Deserialize<List<ReaderViewModel>>(readersJson, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+                Console.WriteLine($"Readers count: {readers.Count}");
+
+                var popularBookIds = readers
+                    .GroupBy(r => r.BookId)
+                    .OrderByDescending(g => g.Count())
+                    .Take(3)
+                    .Select(g => g.Key)
+                    .ToList();
+
+                var allBooks = await GetBooksAsync();
+                var popularBooks = allBooks
+                    .Where(book => popularBookIds.Contains(book.BookId))
+                    .ToList();
+
+                foreach (var book in popularBooks)
+                {
+                    Console.WriteLine($"Popular book: {book.Title}");
+                }
+
+                return popularBooks!;
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                Console.WriteLine($"Error loading data: {httpRequestException.Message}");
+                return new List<BookViewModel>();
+            }
+            catch (JsonException jsonException)
+            {
+                Console.WriteLine($"JSON error: {jsonException.Message}");
+                return new List<BookViewModel>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unexpected error: {ex.Message}");
+                return new List<BookViewModel>();
+            }
         }
 
 

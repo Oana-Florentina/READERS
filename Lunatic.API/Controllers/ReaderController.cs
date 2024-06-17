@@ -87,7 +87,7 @@ namespace Lunatic.API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var result = await Mediator.Send(new GetAllReadersQuery());
-            return Ok(result);
+            return Ok(result.Readers);
         }
 
     }
