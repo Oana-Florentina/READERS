@@ -80,7 +80,6 @@ namespace Lunatic.UI.Services
                 {
                     PropertyNameCaseInsensitive = true
                 });
-                Console.WriteLine($"Readers count: {readers.Count}");
 
                 var popularBookIds = readers
                     .GroupBy(r => r.BookId)

@@ -31,9 +31,9 @@
             {
                 <p><em>Loading...</em></p>
             }
-            else if (!FriendRequests.Any())
+            else if (!FriendRequests.Any() && !FriendRecommandations.Any())
             {
-                <p>No friend requests.</p>
+                <p>No notifications.</p>
             }
             else
             {
@@ -50,20 +50,18 @@
                             </button>
                         </div>
                     }
-                        @if (!FriendRecommandations.Any())
-                        {
-                            <p>No Friend Recommandations.</p>
-                        }
-                        else
-                        {
                             @foreach (var request in FriendRecommandations)
                             {
                                 <div class="friend-request-item">
                                     <p><strong>@FriendRecommandationSenders[request.SenderId]</strong> has recommended you a book!</p>
-                            <p><strong>Book Title:</strong> @request.BookId</p>
-                           
-                        </div>
-                    }}
+                                <p>
+                                    <NavLink href="@($"/book/{request.BookId}")">@RecommendedBookTitles[request.FriendRecommandationId]</NavLink>
+                                </p>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-times"></i> 
+                                </button>
+                            </div>
+                    }
                 </div>
             }
         </div>
@@ -148,6 +146,8 @@
     private List<FriendRequestViewModel> FriendRequests { get; set; } = new();
     private List<FriendRecommandationViewModel> FriendRecommandations { get; set; } = new();
     private Dictionary<Guid, string> FriendRecommandationSenders { get; set; } = new();
+    private Dictionary<Guid, string> RecommendedBookTitles { get; set; } = new();
+
 
     public List<BookViewModel> PopularBooks { get; set; } = new();
     public List<BookViewModel> Books { get; set; } = new();
@@ -173,10 +173,10 @@
 
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
             FriendRecommandations = await UserDataService.GetFriendRecommandationByUserIdAsync(userId);
-            
+
             Console.WriteLine("FriendRecommandation: " + FriendRecommandations.Count);
 
-           foreach (var request in FriendRequests)
+            foreach (var request in FriendRequests)
             {
                 var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
                 if (senderProfile != null)
@@ -186,13 +186,19 @@
             }
 
 
-           foreach (var request in FriendRecommandations)
+            foreach (var request in FriendRecommandations)
             {
                 var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
-                Console.WriteLine($"senderProfile:  {request.SenderId}");
+                Console.WriteLine($"senderProfile:  {senderProfile.Username}");
                 if (senderProfile != null)
                 {
                     FriendRecommandationSenders[request.SenderId] = senderProfile.Username;
+
+                }
+                var book = await BookDataService.GetBookByIdAsync(request.BookId);
+                if (book != null)
+                {
+                    RecommendedBookTitles[request.FriendRecommandationId] = book.Title;
                 }
             }
 
@@ -252,4 +258,5 @@
     {
         NavigationManager.NavigateTo($"/book/{bookId}");
     }
+   
 }
