@@ -23,9 +23,9 @@
     </div>
 
     <div class="notifications-section">
-        <button class="notifications-button" @onclick="ToggleFriendRequests">
-            <i class="fas fa-bell"></i> (@FriendRequests.Count)
-        </button>
+            <button class="notifications-button" @onclick="ToggleFriendRequests">
+                <i class="fas fa-bell"></i> (@TotalNotifications)
+            </button>
         <div class="friend-requests" style="display: @(showFriendRequests ? "block" : "none")">
             @if (isLoading)
             {
@@ -147,7 +147,7 @@
     private List<FriendRecommandationViewModel> FriendRecommandations { get; set; } = new();
     private Dictionary<Guid, string> FriendRecommandationSenders { get; set; } = new();
     private Dictionary<Guid, string> RecommendedBookTitles { get; set; } = new();
-
+    private int TotalNotifications { get; set; } = 0;
 
     public List<BookViewModel> PopularBooks { get; set; } = new();
     public List<BookViewModel> Books { get; set; } = new();
@@ -173,6 +173,7 @@
 
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
             FriendRecommandations = await UserDataService.GetFriendRecommandationByUserIdAsync(userId);
+            TotalNotifications = FriendRequests.Count + FriendRecommandations.Count;
 
             Console.WriteLine("FriendRecommandation: " + FriendRecommandations.Count);
 

@@ -31,11 +31,12 @@ else
         <p><strong>Average Score:</strong> @Book.AverageScore</p>
         <p><strong>Genres:</strong> @Book.Genres</p>
 
-        
-
         <!-- Action Buttons -->
         <button class="btn btn-success" @onclick="AddToWantToRead">Add to Want to Read</button>
         <button class="btn btn-primary" @onclick="OpenReadBooksModal">Add to Read Books</button>
+        <button class="btn btn-info" @onclick="OpenRecommendModal">
+            <i class="fas fa-user-plus"></i> Recommend to Friend
+        </button>
     </div>
 }
 
@@ -58,7 +59,7 @@ else
                         <label for="endDate" class="form-label">End Date</label>
                         <input type="date" id="endDate" class="form-control" @bind="EndDate">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="score" class="form-label">Rating Score (optional)</label>
                         <input type="number" id="score" class="form-control" @bind="Score" min="0" max="5" step="0.1">
@@ -76,6 +77,41 @@ else
         </div>
     </div>
 }
+
+<!-- Modal for Recommending to Friends -->
+@if (IsRecommendModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Recommend to Friends</h5>
+                    <button type="button" class="btn-close" @onclick="CloseRecommendModal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" placeholder="Search friends..." @bind="searchTerm" @bind:event="oninput" />
+
+                    <div class="friends-list">
+                        @foreach (var friend in FilteredFriends)
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="friendCheck_@friend.UserId" @bind="friend.IsChecked">
+                                <label class="form-check-label" for="friendCheck_@friend.UserId">
+                                    @friend.Username
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseRecommendModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SendRecommendations">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 @code {
     [Parameter]
@@ -95,18 +131,33 @@ else
     private float Score { get; set; } = 0; // Default value for score
     private string CommentMessage { get; set; } = string.Empty; // Default value for comment
 
+    // Recommendation modal properties
+    private bool IsRecommendModalVisible { get; set; }
+    private string searchTerm = string.Empty;
+    private List<FriendViewModel> FriendsList = new();
+    private List<FriendViewModel> FilteredFriends => string.IsNullOrEmpty(searchTerm)
+        ? FriendsList
+        : FriendsList.Where(f => f.Username.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+
     protected override async Task OnInitializedAsync()
     {
-        
+        var userId = await dataService.GetItemAsync<Guid>("UserId");
+
         if (bookId != Guid.Empty)
         {
             Book = await BookDataService.GetBookByIdAsync(bookId);
+
+            // Fetch friends and map to FriendViewModel
+            var friends = await UserDataService.GetFriendsByUserIdAsync(userId);
+            FriendsList = friends.Select(f => new FriendViewModel(f.UserId, f.Username)).ToList();
+
             Console.WriteLine($"BookId: {bookId}");
-        Console.WriteLine($"cover: {Book?.Cover}");
-        Console.WriteLine($"Title: {Book?.Title}");
-        Console.WriteLine($"{Book}");
+            Console.WriteLine($"cover: {Book?.Cover}");
+            Console.WriteLine($"Title: {Book?.Title}");
+            Console.WriteLine($"{Book}");
             Console.WriteLine($"Book: {Book?.Title}");
             Console.WriteLine($"Book: {Book?.Genres}");
+
             if (Book == null)
             {
                 NavigationManager.NavigateTo("/404");
@@ -126,6 +177,16 @@ else
     private void CloseModal()
     {
         IsModalVisible = false;
+    }
+
+    private void OpenRecommendModal()
+    {
+        IsRecommendModalVisible = true;
+    }
+
+    private void CloseRecommendModal()
+    {
+        IsRecommendModalVisible = false;
     }
 
     private async Task AddToWantToRead()
@@ -204,8 +265,8 @@ else
                 };
 
             var addedReader = await ReaderDataService.AddReaderAsync(reader);
-            if(addedReader.Success)
-            {  
+            if (addedReader.Success)
+            {
                 var addReaderToUser = await UserDataService.AddReaderToUserAsync(userId, addedReader.Reader.ReaderId);
                 Console.WriteLine($"Reader added to user: {addReaderToUser.Success}");
             }
@@ -215,6 +276,51 @@ else
         catch (Exception ex)
         {
             Console.WriteLine($"Error adding book to read list: {ex.Message}");
+            // Handle error (e.g., show a message to the user)
+        }
+    }
+
+    private async Task SendRecommendations()
+    {
+        try
+        {
+            var userId = await dataService.GetItemAsync<Guid>("UserId");
+
+            var selectedFriends = FriendsList.Where(f => f.IsChecked).ToList();
+
+            if (!selectedFriends.Any())
+            {
+                Console.WriteLine("No friends selected for recommendation.");
+                return;
+            }
+
+            foreach (var friend in selectedFriends)
+            {
+                var recommendation = new FriendRecommandationViewModel
+                    {
+                        FriendRecommandationId = Guid.NewGuid(),
+                        SenderId = userId,
+                        ReceiverId = friend.UserId,
+                        BookId = bookId
+                    };
+
+                var response = await UserDataService.SendFriendRecommandationAsync(recommendation);
+
+                if (response.Success)
+                {
+                    Console.WriteLine($"Successfully recommended book to {friend.Username}");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to recommend book to {friend.Username}");
+                }
+            }
+
+            CloseRecommendModal();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending recommendations: {ex.Message}");
             // Handle error (e.g., show a message to the user)
         }
     }

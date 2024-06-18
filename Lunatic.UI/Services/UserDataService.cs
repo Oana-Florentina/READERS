@@ -325,10 +325,15 @@ namespace Lunatic.UI.Services
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var friendRequest = JsonSerializer.Deserialize<List<FriendRequestViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var friendRequests = JsonSerializer.Deserialize<List<FriendRequestViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return friendRequest!;
+            var filteredFriendRequests = friendRequests
+                .Where(r => r.ReceiverId == userId)
+                .ToList();
+
+            return filteredFriendRequests!;
         }
+
         public async Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status)
         {
             httpClient.DefaultRequestHeaders.Authorization
@@ -373,19 +378,19 @@ namespace Lunatic.UI.Services
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<GetFriendRecommandationByReceiverIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            var friendRecommandations = new List<FriendRecommandationViewModel>();
-            foreach (var recommandation in result.FriendRecommandations)
-            {
-                friendRecommandations.Add(new FriendRecommandationViewModel
+            var friendRecommandations = result.FriendRecommandations
+                .Where(r => r.ReceiverId == userId)
+                .Select(r => new FriendRecommandationViewModel
                 {
-                    FriendRecommandationId = recommandation.FriendRecommandationId,
-                    SenderId = recommandation.SenderId,
-                    ReceiverId = recommandation.ReceiverId,
-                    BookId = recommandation.BookId,
-                });
-            }
+                    FriendRecommandationId = r.FriendRecommandationId,
+                    SenderId = r.SenderId,
+                    ReceiverId = r.ReceiverId,
+                    BookId = r.BookId,
+                }).ToList();
+
             return friendRecommandations!;
         }
+
 
         public async Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation)
         {
