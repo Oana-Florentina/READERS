@@ -1,5 +1,62 @@
-﻿<h3>BookClubs</h3>
+﻿@page "/bookClubs"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@inject IBookClubDataService BookClubDataService
+@inject NavigationManager NavigationManager
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bookClubs.css">
+    <title>Book Clubs</title>
+</head>
+
+<h3>Book Clubs</h3>
+
+@if (isLoading)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!BookClubss.Any())
+{
+    <p>No book clubs available.</p>
+}
+else
+{
+    <div class="book-clubs-container">
+        @foreach (var bookClub in BookClubss)
+        {
+            <div class="book-club-card">
+                <h4>@bookClub.Title</h4>
+                <p><strong>Members:</strong> @bookClub.Members.Count</p>
+                <button class="btn btn-primary" @onclick="() => NavigateToBookClubDetails(bookClub.BookClubId)">Details</button>
+            </div>
+        }
+    </div>
+}
 
 @code {
+    private List<BookClubViewModel> BookClubss { get; set; } = new();
+    private bool isLoading { get; set; } = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            BookClubss = await BookClubDataService.GetAllBookClubsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading book clubs: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void NavigateToBookClubDetails(Guid bookClubId)
+    {
+        NavigationManager.NavigateTo($"/bookClub/{bookClubId}");
+    }
 }

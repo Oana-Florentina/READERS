@@ -7,5 +7,7 @@ namespace Lunatic.UI.Contracts
     public interface IBookClubDataService
     {
         Task<List<BookClubViewModel>> GetAllBookClubsAsync();
+        Task<BookClubViewModel> GetBookClubByIdAsync(Guid bookClubId);
+
     }
 }

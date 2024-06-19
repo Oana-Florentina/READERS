@@ -1,0 +1,103 @@
+﻿@page "/bookclub/{bookClubId:guid}"
+@using Lunatic.UI.Contracts
+@using Lunatic.UI.ViewModels
+@inject IBookClubDataService BookClubDataService
+@inject NavigationManager NavigationManager
+@inject IBookDataService BookDataService
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bookClubDetails.css">
+    <title>Book Club Details</title>
+</head>
+
+<h3>Book Club Details</h3>
+
+@if (BookClub == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="book-club-details">
+        <h2>@BookClub.Title</h2>
+        <p><strong>Description:</strong> @BookClub.Description</p>
+        <p><strong>Number of Members:</strong> @BookClub.Members!.Count</p>
+
+        <button class="btn btn-primary" @onclick="NavigateToBookClubList">Back to List</button>
+    </div>
+
+    <div class="books-section">
+        <h3>Books in this Club</h3>
+        <div class="books-container">
+            @if (Books == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else if (!Books.Any())
+            {
+                <p>No books available in this club.</p>
+            }
+            else
+            {
+                @foreach (var book in Books)
+                {
+                    <div class="book-card">
+                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
+                        <div class="book-details">
+                            <h5>@book.Title</h5>
+                            <p>@book.Author</p>
+                            <p>@book.Genres</p>
+                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid bookClubId { get; set; }
+
+    public BookClubViewModel? BookClub { get; set; }
+    public List<BookViewModel> Books { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (bookClubId != Guid.Empty)
+        {
+            BookClub = await BookClubDataService.GetBookClubByIdAsync(bookClubId);
+            if (BookClub != null)
+            {
+                foreach (var bookId in BookClub.Books)
+                {
+                    var book = await BookDataService.GetBookByIdAsync(bookId);
+                    if (book != null)
+                    {
+                        Books.Add(book);
+                    }
+                }
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/404");
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/404");
+        }
+    }
+
+    private void NavigateToBookClubList()
+    {
+        NavigationManager.NavigateTo("/bookclubs");
+    }
+
+    private void NavigateToBook(Guid bookId)
+    {
+        NavigationManager.NavigateTo($"/book/{bookId}");
+    }
+}

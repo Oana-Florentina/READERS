@@ -1,4 +1,5 @@
 ﻿using Lunatic.UI.Contracts;
+using Lunatic.UI.Services.Responses;
 using Lunatic.UI.ViewModels;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -35,5 +36,23 @@ namespace Lunatic.UI.Services
 
             return bookClubs!;
         }
+        public async Task<BookClubViewModel> GetBookClubByIdAsync(Guid bookClubId)
+        {
+            var result = await httpClient.GetAsync($"api/v1/bookClub/{bookClubId}");
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            var bookClub = JsonSerializer.Deserialize<GetBookClubByIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var bookClubViewModel = new BookClubViewModel
+            {
+                BookClubId = bookClub.BookClub.BookClubId,
+                Title = bookClub.BookClub.Title,
+                Description = bookClub.BookClub.Description,
+                Books = bookClub.BookClub.Books,
+                Members = bookClub.BookClub.Members
+            };
+
+            return bookClubViewModel!;
+        }
+
     }
 }

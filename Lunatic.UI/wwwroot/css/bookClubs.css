@@ -1,0 +1,29 @@
+﻿.book-clubs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+}
+
+.book-club-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 250px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+    .book-club-card h4 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .book-club-card p {
+        margin: 5px 0;
+    }
+
+    .book-club-card .btn {
+        margin-top: 10px;
+    }
