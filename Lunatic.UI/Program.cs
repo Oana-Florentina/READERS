@@ -54,6 +54,10 @@ builder.Services.AddHttpClient<IReaderDataService, ReaderDataService>(client =>
     client.BaseAddress = new Uri("http://localhost:5012/");
 });
 
+builder.Services.AddHttpClient<IBookClubDataService, BookClubDataService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5012/");
+});
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>
