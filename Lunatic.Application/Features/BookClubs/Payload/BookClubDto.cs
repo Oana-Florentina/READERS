@@ -11,8 +11,8 @@ namespace Lunatic.Application.Features.BookClubs.Payload
         public Guid BookClubId { get; set; } = default!;
         public string Title { get; set; } = default!;
         public string Description { get; set; } = default!;
-        public List<Guid> Books { get; private set; } = default!;
-        public List<Guid> Members { get; private set; } = default!;
+        public List<Guid> Books { get;  set; } = default!;
+        public List<Guid> Members { get;  set; } = default!;
 
     }
 }
