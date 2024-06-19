@@ -1,9 +1,11 @@
 ﻿using Lunatic.Application.Features.BookClubs.Commands;
+using Lunatic.Application.Features.BookClubs.Commands.Update;
 using Lunatic.Application.Features.BookClubs.Queries.GetAll;
 using Lunatic.Application.Features.BookClubs.Queries.GetById;
 using Lunatic.Application.Features.Books.Queries.GetAll;
 using Lunatic.Application.Features.Books.Queries.GetById;
 using Lunatic.Application.Features.Users.Commands.CreateUser;
+using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lunatic.API.Controllers
@@ -46,7 +48,28 @@ namespace Lunatic.API.Controllers
             }
             return Ok(result);
         }
+        [HttpPut("{bookClubId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<UpdateBookClubCommandResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<UpdateBookClubCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(Guid bookClubId, UpdateBookClubCommand command)
+        {
+            if (bookClubId != command.BookClub)
+            {
+                return BadRequest(new UpdateUserCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The BookClub Id Path and BookClub Id Body must be equal." }
+                });
+            }
 
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
 
     }
 }
