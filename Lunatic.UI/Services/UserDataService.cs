@@ -72,7 +72,7 @@ namespace Lunatic.UI.Services
                 LastName = response.User.LastName,
                 Email = response.User.Email,
                 WantToReadIds = response.User.WantToReadIds,
-                BookClub = response.User.BookClub,
+                BookClub = response.User.BookClubId,
             };
             return profileViewModel!;
         }

@@ -1,6 +1,7 @@
 ﻿using Lunatic.Application.Persistence;
 using Lunatic.Domain.Entities;
 using Lunatic.Domain.Utils;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,10 @@ namespace Lunatic.Infrastructure.Repositories
         {
         }
 
-        public async Task<bool> ExistsByTitleAsync(string title)
+        public async Task<bool> ExistsByTitleAsync(string title, Guid? excludeBookClubId = null)
         {
-            var result = await FindByTitleAsync(title);
-            return result.IsSuccess;
+            return await context.BookClubs
+                .AnyAsync(bc => bc.Title == title && (!excludeBookClubId.HasValue || bc.BookClubId != excludeBookClubId.Value));
         }
         public async Task<Result<BookClub>> FindByTitleAsync(string title)
         {

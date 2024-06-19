@@ -56,7 +56,7 @@ namespace Lunatic.API.Controllers
         {
             if (bookClubId != command.BookClub)
             {
-                return BadRequest(new UpdateUserCommandResponse
+                return BadRequest(new UpdateBookClubCommandResponse
                 {
                     Success = false,
                     ValidationErrors = new List<string> { "The BookClub Id Path and BookClub Id Body must be equal." }

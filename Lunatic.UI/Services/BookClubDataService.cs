@@ -56,7 +56,7 @@ namespace Lunatic.UI.Services
         }
         public async Task<bool> JoinBookClub(ProfileViewModel CurrentUser, Guid bookClubId)
         {
-             if (CurrentUser != null)
+            if (CurrentUser != null)
             {
                 Console.WriteLine($"User: {CurrentUser.UserId}");
                 var updateUserPayload = new
@@ -70,17 +70,35 @@ namespace Lunatic.UI.Services
                 Console.WriteLine(updateUserPayload);
                 var updateUserResponse = await httpClient.PutAsJsonAsync($"api/v1/users/{CurrentUser.UserId}", updateUserPayload);
 
-                var BookClub = await GetBookClubByIdAsync(bookClubId);
-                Console.WriteLine(BookClub.Members);
-                if(BookClub!=null)
+                if (updateUserResponse.IsSuccessStatusCode)
                 {
-                    BookClub.Members.Add(CurrentUser.UserId);
+                    var bookClub = await GetBookClubByIdAsync(bookClubId);
+                    Console.WriteLine(bookClub.Members);
+                    if (bookClub != null)
+                    {
+                        bookClub.Members!.Add(CurrentUser.UserId);
+                        
+                          
+
+                        var updateBookClubPayload = new
+                        {
+                            bookClub = bookClub.BookClubId,
+                            title = bookClub.Title,
+                            description = bookClub.Description,
+                            books = bookClub.Books,
+                            members = bookClub.Members
+                        };
+
+                        var updateBookClubResponse = await httpClient.PutAsJsonAsync($"api/v1/bookclub/{bookClubId}", updateBookClubPayload);
+
+                        return updateBookClubResponse.IsSuccessStatusCode;
+                    }
                 }
-                return updateUserResponse.IsSuccessStatusCode;
             }
 
             return false;
         }
+
 
 
 
