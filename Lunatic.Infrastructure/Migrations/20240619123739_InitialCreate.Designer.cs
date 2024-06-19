@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lunatic.Infrastructure.Migrations
 {
     [DbContext(typeof(LunaticContext))]
-    [Migration("20240619114856_InitialCreate")]
+    [Migration("20240619123739_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,6 +62,33 @@ namespace Lunatic.Infrastructure.Migrations
                     b.HasKey("BookId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("Lunatic.Domain.Entities.BookClub", b =>
+                {
+                    b.Property<Guid>("BookClubId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<List<Guid>>("Books")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<List<Guid>>("Members")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("BookClubId");
+
+                    b.ToTable("BookClubs");
                 });
 
             modelBuilder.Entity("Lunatic.Domain.Entities.CoverImage", b =>

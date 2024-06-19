@@ -8,9 +8,9 @@ namespace Lunatic.Domain.Entities
 {
     public class BookClub
     {
-        public BookClub(Guid bookClubId, string title, string description, string genres)
+        public BookClub(string title, string description)
         {
-            BookClubId = bookClubId;
+            BookClubId = Guid.NewGuid();
             Title = title;
             Description = description;
         }

@@ -13,6 +13,21 @@ namespace Lunatic.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BookClubs",
+                columns: table => new
+                {
+                    BookClubId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Books = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
+                    Members = table.Column<List<Guid>>(type: "uuid[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BookClubs", x => x.BookClubId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Books",
                 columns: table => new
                 {
@@ -172,6 +187,9 @@ namespace Lunatic.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BookClubs");
+
             migrationBuilder.DropTable(
                 name: "Books");
 

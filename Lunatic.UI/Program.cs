@@ -38,6 +38,7 @@ builder.Services.AddHttpClient<IBookDataService, BookDataService>(client =>
 	client.BaseAddress = new Uri("http://localhost:5012/");
 });
 
+
 builder.Services.AddHttpClient<IUserDataService, UserDataService>(client =>
 {
     client.BaseAddress = new Uri("http://localhost:5012/");

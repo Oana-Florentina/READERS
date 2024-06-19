@@ -15,6 +15,7 @@ namespace Lunatic.Infrastructure {
         public DbSet<CoverImage> CoverImages { get; set; }
         public DbSet<FriendRequest> FriendRequest { get; set; }
         public DbSet<FriendRecommandation> FriendRecommandation { get; set; }
+        public DbSet<BookClub> BookClubs { get; set; }
 
 
         // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
