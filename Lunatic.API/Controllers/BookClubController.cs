@@ -1,7 +1,8 @@
 ﻿using Lunatic.Application.Features.BookClubs.Commands;
 using Lunatic.Application.Features.BookClubs.Queries.GetAll;
-
+using Lunatic.Application.Features.BookClubs.Queries.GetById;
 using Lunatic.Application.Features.Books.Queries.GetAll;
+using Lunatic.Application.Features.Books.Queries.GetById;
 using Lunatic.Application.Features.Users.Commands.CreateUser;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,20 @@ namespace Lunatic.API.Controllers
         {
             var result = await Mediator.Send(new GetAllBookClubsQuery());
             return Ok(result.BookClubs);
+        }
+
+        [HttpGet("{bookClubId}")]
+        [Produces("application/json")]
+        [ProducesResponseType<GetBookClubByIdQueryResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<GetBookClubByIdQueryResponse>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(Guid bookClubId)
+        {
+            var result = await Mediator.Send(new GetBookClubByIdQuery(bookClubId));
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
 
 

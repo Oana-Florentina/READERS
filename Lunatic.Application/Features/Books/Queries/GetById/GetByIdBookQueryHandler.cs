@@ -4,9 +4,6 @@ using MediatR;
 using Lunatic.Application.Features.Books.Mapper;
 
 
-
-
-
 namespace Lunatic.Application.Features.Books.Queries.GetById
 {
     public class GetByIdBookQueryHandler : IRequestHandler<GetByIdBookQuery, GetByIdBookQueryResponse>
