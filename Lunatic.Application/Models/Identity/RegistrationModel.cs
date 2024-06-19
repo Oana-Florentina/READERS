@@ -14,10 +14,12 @@ namespace Lunatic.Application.Models.Identity {
         public string Username { get; set; } = default!;
 
         [Required(ErrorMessage = "A valid email address is required")]
+
         [EmailAddress(ErrorMessage = "A valid email address is required")]
         public string Email { get; set; } = default!;
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; } = default!;
+
     }
 }

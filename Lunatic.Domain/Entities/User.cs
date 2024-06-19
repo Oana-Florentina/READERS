@@ -13,6 +13,8 @@ namespace Lunatic.Domain.Entities {
             Username = username;
             Password = password;
             Role = role;
+          
+
         }
         public Guid UserId { get; private set; }
         public DateTime CreatedDate { get; private set; }
@@ -22,6 +24,7 @@ namespace Lunatic.Domain.Entities {
         public string Username { get; private set; }
         public string Password { get; private set; }
         public Role Role { get; private set; }
+        public Guid BookClubId { get; private set; } = Guid.Empty;
         public List<Guid> ReaderIds { get; private set; } = new List<Guid>();
         public List<Guid> FavoriteIds { get; private set; } = new List<Guid>();
         public List<Guid> WantToReadIds { get; private set; } = new List<Guid>();
