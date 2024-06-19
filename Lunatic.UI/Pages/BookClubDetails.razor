@@ -3,6 +3,8 @@
 @using Lunatic.UI.ViewModels
 @inject IBookClubDataService BookClubDataService
 @inject NavigationManager NavigationManager
+@inject IUserDataService UserDataService
+@inject IDataService DataService
 @inject IBookDataService BookDataService
 
 <head>
@@ -22,50 +24,162 @@ else
     <div class="book-club-details">
         <h2>@BookClub.Title</h2>
         <p><strong>Description:</strong> @BookClub.Description</p>
-        <p><strong>Number of Members:</strong> @BookClub.Members!.Count</p>
+        <p><strong>Number of Members:</strong> @BookClub.Members.Count</p>
+        <p><strong>Total Readers of Members:</strong> @TotalReaders</p>
 
-        <button class="btn btn-primary" @onclick="NavigateToBookClubList">Back to List</button>
+        <button class="btn btn-primary" @onclick="OpenMembersModal">View Members</button>
+        @if (BookClub.Members.Count < 25 && !IsMember)
+        {
+            <button class="btn btn-success" @onclick="JoinBookClub">Join Book Club</button>
+        }
+        @if (IsMember)
+        {
+            <button class="btn btn-danger" @onclick="ConfirmLeaveBookClub">Leave Book Club</button>
+        }
+        <button class="btn btn-secondary" @onclick="NavigateToBookClubList">Back to List</button>
     </div>
 
-    <div class="books-section">
-        <h3>Books in this Club</h3>
-        <div class="books-container">
-            @if (Books == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else if (!Books.Any())
-            {
-                <p>No books available in this club.</p>
-            }
-            else
-            {
-                @foreach (var book in Books)
+    @if (IsMember)
+    {
+        <div class="books-section">
+            <h3>Books in this Club</h3>
+            <button class="btn btn-success mb-3" @onclick="OpenAddBookModal">Add Book</button>
+            <div class="books-container">
+                @if (Books == null)
                 {
-                    <div class="book-card">
-                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
-                        <div class="book-details">
-                            <h5>@book.Title</h5>
-                            <p>@book.Author</p>
-                            <p>@book.Genres</p>
-                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
-                        </div>
-                    </div>
+                    <p><em>Loading...</em></p>
                 }
-            }
+                else if (!Books.Any())
+                {
+                    <p>No books available in this club.</p>
+                }
+                else
+                {
+                    @foreach (var book in Books)
+                    {
+                        <div class="book-card">
+                            <img src="@book.Cover" alt="@book.Title" class="book-cover" />
+                            <div class="book-details">
+                                <h5>@book.Title</h5>
+                                <p>@book.Author</p>
+                                <p>@book.Genres</p>
+                                <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+                                <button class="btn btn-danger" @onclick="() => RemoveBookFromClub(book.BookId)">Remove</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    }
+}
+
+<!-- Modal for Viewing Members -->
+@if (IsMembersModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Book Club Members</h5>
+                    <button type="button" class="btn-close" @onclick="CloseMembersModal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul>
+                        @foreach (var member in Members)
+                        {
+                            <li>@member.Username</li>
+                        }
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseMembersModal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 }
 
+<!-- Modal for Adding a Book -->
+@if (IsAddBookModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add a Book</h5>
+                    <button type="button" class="btn-close" @onclick="CloseAddBookModal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form to add a book -->
+                    <div class="mb-3">
+                        <label for="bookTitle" class="form-label">Book Title</label>
+                        <input type="text" id="bookTitle" class="form-control" @bind="NewBookTitle">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bookAuthor" class="form-label">Book Author</label>
+                        <input type="text" id="bookAuthor" class="form-control" @bind="NewBookAuthor">
+                    </div>
+                    <!-- Add other book details as needed -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddBookModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="AddBookToClub">Add Book</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Confirmation Modal for Leaving Book Club -->
+@if (IsLeaveConfirmationVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Leave Book Club</h5>
+                    <button type="button" class="btn-close" @onclick="CloseLeaveConfirmation"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to leave this book club?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseLeaveConfirmation">Cancel</button>
+                    <button type="button" class="btn btn-danger" @onclick="LeaveBookClub">Leave</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
 @code {
     [Parameter]
     public Guid bookClubId { get; set; }
-
+    [Inject]
+    public IDataService dataService { get; set; }
     public BookClubViewModel? BookClub { get; set; }
     public List<BookViewModel> Books { get; set; } = new();
+    public List<ProfileViewModel> Members { get; set; } = new();
+    public ProfileViewModel CurrentUser { get; set; } = new ();
+
+
+    public int TotalReaders { get; set; } = 0;
+    public bool IsMember { get; set; } = false;
+
+    private bool IsMembersModalVisible { get; set; } = false;
+    private bool IsAddBookModalVisible { get; set; } = false;
+    private bool IsLeaveConfirmationVisible { get; set; } = false;
+    private string NewBookTitle { get; set; } = string.Empty;
+    private string NewBookAuthor { get; set; } = string.Empty;
+    private Guid CurrentUserId;
 
     protected override async Task OnInitializedAsync()
     {
+        CurrentUserId = await dataService.GetItemAsync<Guid>("UserId");
+        CurrentUser = await UserDataService.GetUserByIdAsync(CurrentUserId);
+        Console.WriteLine($"Current User Id: {CurrentUserId}");
         if (bookClubId != Guid.Empty)
         {
             BookClub = await BookClubDataService.GetBookClubByIdAsync(bookClubId);
@@ -79,6 +193,18 @@ else
                         Books.Add(book);
                     }
                 }
+
+                foreach (var memberId in BookClub.Members)
+                {
+                    var member = await UserDataService.GetUserByIdAsync(memberId);
+                    if (member != null)
+                    {
+                        Members.Add(member);
+                        TotalReaders += member.ReaderIds.Count;
+                    }
+                }
+
+                IsMember = BookClub.Members.Contains(CurrentUserId);
             }
             else
             {
@@ -91,9 +217,68 @@ else
         }
     }
 
+    private void OpenMembersModal()
+    {
+        IsMembersModalVisible = true;
+    }
+
+    private void CloseMembersModal()
+    {
+        IsMembersModalVisible = false;
+    }
+
+    private void OpenAddBookModal()
+    {
+        IsAddBookModalVisible = true;
+    }
+
+    private void CloseAddBookModal()
+    {
+        IsAddBookModalVisible = false;
+    }
+
+    private void ConfirmLeaveBookClub()
+    {
+        IsLeaveConfirmationVisible = true;
+    }
+
+    private void CloseLeaveConfirmation()
+    {
+        IsLeaveConfirmationVisible = false;
+    }
+
     private void NavigateToBookClubList()
     {
         NavigationManager.NavigateTo("/bookclubs");
+    }
+
+    private async Task JoinBookClub()
+    {
+        var success = await BookClubDataService.JoinBookClub(CurrentUser, bookClubId);
+        if (success)
+        {
+            BookClub.Members.Add(CurrentUserId);
+            IsMember = true;
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task LeaveBookClub()
+    {
+        //TODO
+    }
+
+    private async Task AddBookToClub()
+    {
+        //TODO
+    }
+
+    private async Task RemoveBookFromClub(Guid bookId)
+    {
+        BookClub.Books.Remove(bookId);
+        Books.RemoveAll(b => b.BookId == bookId);
+        StateHasChanged();
     }
 
     private void NavigateToBook(Guid bookId)

@@ -8,6 +8,6 @@ namespace Lunatic.UI.Contracts
     {
         Task<List<BookClubViewModel>> GetAllBookClubsAsync();
         Task<BookClubViewModel> GetBookClubByIdAsync(Guid bookClubId);
-
+        Task<bool> JoinBookClub(ProfileViewModel CurrentUser, Guid bookClubId);
     }
 }

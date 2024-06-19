@@ -28,5 +28,6 @@ namespace Lunatic.UI.Contracts
         Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation);
 
 
+
     }
 }

@@ -4,6 +4,7 @@ using Lunatic.UI.ViewModels;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -53,6 +54,36 @@ namespace Lunatic.UI.Services
 
             return bookClubViewModel!;
         }
+        public async Task<bool> JoinBookClub(ProfileViewModel CurrentUser, Guid bookClubId)
+        {
+             if (CurrentUser != null)
+            {
+                Console.WriteLine($"User: {CurrentUser.UserId}");
+                var updateUserPayload = new
+                {
+                    userId = CurrentUser.UserId,
+                    firstName = CurrentUser.FirstName,
+                    lastName = CurrentUser.LastName,
+                    email = CurrentUser.Email,
+                    bookClub = bookClubId
+                };
+                Console.WriteLine(updateUserPayload);
+                var updateUserResponse = await httpClient.PutAsJsonAsync($"api/v1/users/{CurrentUser.UserId}", updateUserPayload);
+
+                var BookClub = await GetBookClubByIdAsync(bookClubId);
+                Console.WriteLine(BookClub.Members);
+                if(BookClub!=null)
+                {
+                    BookClub.Members.Add(CurrentUser.UserId);
+                }
+                return updateUserResponse.IsSuccessStatusCode;
+            }
+
+            return false;
+        }
+
+
+
 
     }
 }
