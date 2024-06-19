@@ -10,5 +10,6 @@ namespace Lunatic.Application.Persistence
     public interface IBookClubRepository: IAsyncRepository<BookClub>
     {
         Task<bool> ExistsByTitleAsync(string username);
+        Task<bool> ExistById(Guid bookClubId);
     }
 }

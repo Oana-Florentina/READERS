@@ -6,9 +6,11 @@ using Lunatic.Application.Persistence;
 namespace Lunatic.Application.Features.Users.Commands.UpdateUser {
 	internal class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand> {
 		private readonly IUserRepository userRepository;
+		private readonly IBookClubRepository bookClubRepository;
 
-		public UpdateUserCommandValidator(IUserRepository userRepository) {
+		public UpdateUserCommandValidator(IUserRepository userRepository, IBookClubRepository bookClubRepository) {
 			this.userRepository = userRepository;
+			this.bookClubRepository = bookClubRepository;
 
 			RuleFor(request => request.UserId)
 				.NotEmpty().WithMessage("{PropertyName} is required.")
@@ -34,12 +36,13 @@ namespace Lunatic.Application.Features.Users.Commands.UpdateUser {
 			.MustAsync(async (email, cancellationToken) => !await this.userRepository.ExistsByEmailAsync(email))
 			.WithMessage("{PropertyName} exists already.");
 
-			//RuleFor(request => request.Username)
-			//    .NotEmpty().WithMessage("{PropertyName} is required.")
-			//    .NotNull().WithMessage("{PropertyName} is required.")
-			//    .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.")
-			//    .MustAsync(async (username, cancellationToken) => !await this.userRepository.ExistsByUsernameAsync(username))
-			//    .WithMessage("{PropertyName} exists already.");
+			
+
+            RuleFor(request => request.BookClub)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull().WithMessage("{PropertyName} is required.")
+                .MustAsync(async (userId, cancellationToken) => await this.bookClubRepository.ExistsByIdAsync(userId))
+                .WithMessage("{PropertyName} must exist.");
 
             ClassLevelCascadeMode = CascadeMode.Stop;
 		}

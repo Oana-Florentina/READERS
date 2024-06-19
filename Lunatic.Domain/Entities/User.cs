@@ -34,10 +34,11 @@ namespace Lunatic.Domain.Entities {
         public List<Guid> FriendsRequests { get; private set; } = new List<Guid>();
 
         
-        public void Update(string firstName, string lastName, string email) {
+        public void Update(string firstName, string lastName, string email, Guid bookClubId) {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
+            BookClubId = bookClubId;
         }
 
         public void AddWantToRead(Guid BookId)

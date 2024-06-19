@@ -36,5 +36,29 @@ namespace Lunatic.Infrastructure.Repositories
             }
             return Result<BookClub>.Failure($"Entity with username {title} not found");
         }
+
+
+        public async Task<bool> ExistById(Guid bookClubId)
+        {
+            var result = await GetByIdAsync(bookClubId);
+            return result.IsSuccess;
+        }
+
+        public async Task<Result<BookClub>> GetByIdAsync(Guid bookClubId)
+        {
+            var result = await GetAllAsync();
+            if (result.IsSuccess)
+            {
+                List<BookClub> bookClubs = result.Value.ToList();
+                BookClub? expectedUser = bookClubs.Find(bookClub => bookClub.BookClubId == bookClubId);
+
+                if (expectedUser == null)
+                {
+                    return Result<BookClub>.Failure($"Entity with id {bookClubId} not found");
+                }
+                return Result<BookClub>.Success(expectedUser);
+            }
+            return Result<BookClub>.Failure($"Entity with id {bookClubId} not found");
+        }
     }
 }

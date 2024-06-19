@@ -7,13 +7,15 @@ namespace Lunatic.Application.Features.Users.Commands.UpdateUser
 {
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UpdateUserCommandResponse> {
         private readonly IUserRepository userRepository;
+        private readonly IBookClubRepository bookClubRepository;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository) {
+        public UpdateUserCommandHandler(IUserRepository userRepository, IBookClubRepository bookClubRepository) {
             this.userRepository = userRepository;
+            this.bookClubRepository = bookClubRepository;
         }
 
         public async Task<UpdateUserCommandResponse> Handle(UpdateUserCommand request, CancellationToken cancellationToken) {
-            var validator = new UpdateUserCommandValidator(this.userRepository);
+            var validator = new UpdateUserCommandValidator(this.userRepository, this.bookClubRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validatorResult.IsValid) {
@@ -31,7 +33,7 @@ namespace Lunatic.Application.Features.Users.Commands.UpdateUser
                 };
             }
 
-            userResult.Value.Update(request.FirstName, request.LastName, request.Email);
+            userResult.Value.Update(request.FirstName, request.LastName, request.Email, request.BookClub);
 
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
 
