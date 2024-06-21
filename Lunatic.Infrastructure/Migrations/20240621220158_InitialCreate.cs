@@ -170,7 +170,6 @@ namespace Lunatic.Infrastructure.Migrations
                     Username = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false),
-                    BookClubId = table.Column<Guid>(type: "uuid", nullable: false),
                     ReaderIds = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
                     FavoriteIds = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
                     WantToReadIds = table.Column<List<Guid>>(type: "uuid[]", nullable: false),

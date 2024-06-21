@@ -29,6 +29,15 @@ namespace Lunatic.Application.Features.Users.Commands.AddReader
                .NotNull().WithMessage("{PropertyName} is required.")
                .MustAsync(async (readerId, cancellationToken) => await this.readerRepository.ExistsByIdAsync(readerId))
                .WithMessage("{PropertyName} must exists.");
+
+            RuleFor(request => new { request.UserId, request.ReaderId })
+             .MustAsync(async (req, cancellationToken) => {
+                 var user = (await this.userRepository.FindByIdAsync(req.UserId)).Value;
+                 return !user.ReaderIds.Contains(req.ReaderId);
+             })
+             .WithMessage("User must not include ReaderId.");
+
+
         }
     }
 }

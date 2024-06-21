@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lunatic.Infrastructure.Migrations
 {
     [DbContext(typeof(LunaticContext))]
-    [Migration("20240619123739_InitialCreate")]
+    [Migration("20240621220158_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -289,9 +289,6 @@ namespace Lunatic.Infrastructure.Migrations
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("BookClubId")
                         .HasColumnType("uuid");
 
                     b.Property<List<Guid>>("BookClubIds")

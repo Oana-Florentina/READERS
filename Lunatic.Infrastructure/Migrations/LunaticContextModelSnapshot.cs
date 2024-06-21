@@ -288,9 +288,6 @@ namespace Lunatic.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("BookClubId")
-                        .HasColumnType("uuid");
-
                     b.Property<List<Guid>>("BookClubIds")
                         .IsRequired()
                         .HasColumnType("uuid[]");
