@@ -33,7 +33,7 @@ namespace Lunatic.Application.Features.Users.Commands.UpdateUser
                 };
             }
 
-            userResult.Value.Update(request.FirstName, request.LastName, request.Email, request.BookClub);
+            userResult.Value.Update(request.FirstName, request.LastName, request.Email);
 
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
 

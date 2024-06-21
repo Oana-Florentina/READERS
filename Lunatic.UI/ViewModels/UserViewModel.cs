@@ -11,7 +11,7 @@
         public List<Guid> ReaderIds { get;  set; } = new();
         public List<Guid> FriendsIds { get;  set; } = new();
         public List<Guid> FriendsRequests { get;  set; } = new();
-        public Guid BookClub { get;  set; } = new();
+        public List<Guid> BookClubs { get; set; } = new();
         public List<Guid> FavoriteIds { get; set; } = new();
 
 

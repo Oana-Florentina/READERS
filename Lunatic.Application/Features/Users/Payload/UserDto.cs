@@ -10,7 +10,7 @@ namespace Lunatic.Application.Features.Users.Payload {
         public string Email { get; set; } = default!;
         public string Username { get; set; } = default!;
         public Role Role { get; set; } = default!;
-        public Guid BookClubId { get; set; } = default!;
+        public List<Guid> BookClubIds { get; set; } = default!;
         public List<Guid> ReaderIds { get; set; } = default!;
         public List<Guid> WantToReadIds { get; set; } = default!;
 

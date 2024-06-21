@@ -24,7 +24,6 @@ namespace Lunatic.Domain.Entities {
         public string Username { get; private set; }
         public string Password { get; private set; }
         public Role Role { get; private set; }
-        public Guid BookClubId { get; private set; } = Guid.Empty;
         public List<Guid> ReaderIds { get; private set; } = new List<Guid>();
         public List<Guid> FavoriteIds { get; private set; } = new List<Guid>();
         public List<Guid> WantToReadIds { get; private set; } = new List<Guid>();
@@ -34,11 +33,10 @@ namespace Lunatic.Domain.Entities {
         public List<Guid> FriendsRequests { get; private set; } = new List<Guid>();
 
         
-        public void Update(string firstName, string lastName, string email, Guid bookClubId) {
+        public void Update(string firstName, string lastName, string email) {
             FirstName = firstName;
             LastName = lastName;
             Email = email;
-            BookClubId = bookClubId;
         }
 
         public void AddWantToRead(Guid BookId)
@@ -75,7 +73,14 @@ namespace Lunatic.Domain.Entities {
         {
             FriendsRequests.Remove(requestId);
         }
-
+        public void AddBookClub(Guid bookClubId)
+        {
+            BookClubIds.Add(bookClubId);
+        }
+        public void RemoveBookClub(Guid bookClubId)
+        {
+            BookClubIds.Remove(bookClubId);
+        }
 
     }
 }

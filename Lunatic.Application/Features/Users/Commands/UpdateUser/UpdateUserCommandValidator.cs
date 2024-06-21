@@ -37,11 +37,7 @@ namespace Lunatic.Application.Features.Users.Commands.UpdateUser {
 
 			
 
-            RuleFor(request => request.BookClub)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull().WithMessage("{PropertyName} is required.")
-                .MustAsync(async (userId, cancellationToken) => await this.bookClubRepository.ExistsByIdAsync(userId))
-                .WithMessage("{PropertyName} must exist.");
+          
 
             ClassLevelCascadeMode = CascadeMode.Stop;
 		}

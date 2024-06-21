@@ -34,6 +34,10 @@ else
     </div>
 }
 
+<button class="btn btn-success create-button" @onclick="NavigateToCreateBookClub">
+    <i class="fas fa-plus"></i>
+</button>
+
 @code {
     private List<BookClubViewModel> BookClubss { get; set; } = new();
     private bool isLoading { get; set; } = false;
@@ -58,5 +62,10 @@ else
     private void NavigateToBookClubDetails(Guid bookClubId)
     {
         NavigationManager.NavigateTo($"/bookClub/{bookClubId}");
+    }
+
+    private void NavigateToCreateBookClub()
+    {
+        NavigationManager.NavigateTo("/createBookClub");
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Lunatic.Application.Features.Users.Commands.AddReader;
 using Lunatic.Application.Persistence;
 using System;
 using System.Collections.Generic;

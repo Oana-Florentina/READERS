@@ -17,6 +17,7 @@ using Lunatic.Application.Features.Users.Commands.SendFriendRequest;
 using Lunatic.Application.Features.Users.Queries.GetFriendsRequests;
 using Lunatic.Application.Features.Users.Commands.DeleteFriendRequest;
 using Lunatic.Application.Features.Users.Queries.GetFriendsByUserId;
+using Lunatic.Application.Features.Users.Commands.AddBookClub;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -266,6 +267,27 @@ namespace Lunatic.API.Controllers {
             return Ok(result.UserFriends);
         }
 
+        [HttpPost("{userId}/bookClub")]
+        [Produces("application/json")]
+        [ProducesResponseType<AddBookClubToUserCommandResponse>(StatusCodes.Status201Created)]
+        [ProducesResponseType<AddBookClubToUserCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddBookClubToUser(Guid userId, AddBookClubToUserCommand command)
+        {
+            if (userId != command.UserId)
+            {
+                return BadRequest(new AddBookClubToUserCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The user Id Path and user Id Body must be equal." }
+                });
+            }
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }
 

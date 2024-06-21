@@ -26,7 +26,7 @@ namespace Lunatic.Application.Features.Users.Mapper
                 FavoriteIds = user.FavoriteIds,
                 FriendsIds = user.FriendsIds,
                 FriendsRequests = user.FriendsRequests,
-                BookClubId = user.BookClubId
+                BookClubIds = user.BookClubIds
 
             };
         }
