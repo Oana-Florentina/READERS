@@ -10,7 +10,7 @@ namespace Lunatic.Application.Features.BookClubs.Commands.Update
 {
     public class UpdateBookClubCommand : IRequest<UpdateBookClubCommandResponse>
     {
-        public Guid BookClub { get; set; } = default!;
+        public Guid BookClubId { get; set; } = default!;
         public string Title { get; set; } = default!;
         public string Description { get; set; } = default!;
         public List<Guid> Members { get; set; } = default!;

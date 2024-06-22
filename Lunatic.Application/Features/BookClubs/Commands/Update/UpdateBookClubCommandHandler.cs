@@ -28,7 +28,7 @@ namespace Lunatic.Application.Features.BookClubs.Commands.Update
                 };
             }
 
-            var bookClubResult = await this.bookClubRepository.FindByIdAsync(request.BookClub);
+            var bookClubResult = await this.bookClubRepository.FindByIdAsync(request.BookClubId);
             if (!bookClubResult.IsSuccess)
             {
                 return new UpdateBookClubCommandResponse

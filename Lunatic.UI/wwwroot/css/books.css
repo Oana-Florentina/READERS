@@ -7,6 +7,7 @@
 
 .book-card {
     border: 1px solid #ddd;
+    background-color: rgba(255, 177, 177, 0.2);
     border-radius: 4px;
     width: 200px;
     padding: 10px;
@@ -27,10 +28,18 @@
     }
 
 .book-details {
-    justify-content:center
-    
+    justify-content: center;
+    height: 250px;
 }
-
+    .book-details h5, p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px; /* Add margin for spacing */
+    }
+    .book-card button {
+        margin-bottom: 10px;
+    }
 .book-card h5 {
     font-size: 1.1em;
     margin: 5px 0;

@@ -54,8 +54,9 @@ namespace Lunatic.API.Controllers
         [ProducesResponseType<UpdateBookClubCommandResponse>(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(Guid bookClubId, UpdateBookClubCommand command)
         {
-            if (bookClubId != command.BookClub)
+            if (bookClubId != command.BookClubId)
             {
+                
                 return BadRequest(new UpdateBookClubCommandResponse
                 {
                     Success = false,

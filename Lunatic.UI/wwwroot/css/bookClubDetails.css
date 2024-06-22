@@ -79,7 +79,12 @@
 .book-details {
     justify-content: center;
 }
-
+    .book-details h5 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px; /* Add margin for spacing */
+    }
 .book-card h5 {
     font-size: 1.1em;
     margin: 5px 0;
@@ -110,7 +115,9 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
     padding-top: 60px;
 }
-
+.modal-dialog.modal-lg {
+    max-width: 80%; /* Adjust the percentage as needed */
+}
 .modal-content {
     background-color: #fefefe;
     margin: 5% auto; /* 15% from the top and centered */
@@ -119,7 +126,7 @@
     border-radius: 8px;
 }
 
-.modal-header, .modal-body, .modal-footer {
+.modal-header, .modal-footer {
     padding: 10px;
 }
 
@@ -136,4 +143,29 @@
     border: none;
     font-size: 1.2em;
     cursor: pointer;
+}
+.modal-body {
+    padding-top: 0;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.book-cover-small {
+    width: 50px;
+    height: auto;
+}
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.button-container .btn {
+    flex: 1;
+    margin: 0 5px;
 }

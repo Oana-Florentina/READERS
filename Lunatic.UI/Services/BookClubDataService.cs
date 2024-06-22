@@ -71,6 +71,16 @@ namespace Lunatic.UI.Services
             
         }
 
+        public async Task<ApiResponse<BookClubViewModel>> UpdateBookClubAsync(BookClubViewModel bookClub)
+        {
+            httpClient.DefaultRequestHeaders.Authorization
+               = new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+            var result = await httpClient.PutAsJsonAsync($"api/v1/bookclub/{bookClub.BookClubId}", bookClub);
+            result.EnsureSuccessStatusCode();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<BookClubViewModel>>();
+            response!.IsSuccess = result.IsSuccessStatusCode;
+            return response!;
+        }
 
 
     }

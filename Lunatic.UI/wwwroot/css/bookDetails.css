@@ -127,3 +127,16 @@
     padding-top: 10px;
     border-top: 1px solid #ddd;
 }
+@media (max-width: 768px) {
+    .book-card {
+        flex-direction: column;
+    }
+
+    .book-details {
+        text-align: left;
+    }
+
+    .button-container {
+        flex-direction: column;
+    }
+}

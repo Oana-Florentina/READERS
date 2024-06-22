@@ -37,16 +37,22 @@ h3 {
 }
 
 .book-club-card {
-    background-color: #FFB1B1;
+    background-color: rgba(255, 177, 177, 0.4);
     border-radius: 10px;
     padding: 15px;
     margin: 10px;
     text-align: center;
-    width: 200px; /* Ensure uniform width */
-    height: 250px; /* Ensure uniform height */
+    width: 200px;
+    height: 250px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+.book-club-card h4{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px; /* Add margin for spacing */
 }
 
     .book-club-card img {

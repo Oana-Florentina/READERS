@@ -10,6 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bookClubDetails.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
     <title>Book Club Details</title>
 </head>
 
@@ -27,23 +28,23 @@ else
         <p><strong>Number of Members:</strong> @BookClub.Members.Count</p>
         <p><strong>Total Readers of Members:</strong> @TotalReaders</p>
 
-        <button class="btn btn-primary" @onclick="OpenMembersModal">View Members</button>
+        <button class="btn btn-primary" @onclick="OpenMembersModal"><i class="fas fa-users"></i></button>
         @if (BookClub.Members.Count < 25 && !IsMember)
         {
-            <button class="btn btn-success" @onclick="JoinBookClub">Join Book Club</button>
+            <button class="btn btn-success" @onclick="JoinBookClub"><i class="fas fa-user-plus"></i></button>
         }
         @if (IsMember)
         {
-            <button class="btn btn-danger" @onclick="ConfirmLeaveBookClub">Leave Book Club</button>
+            <button class="btn btn-danger" @onclick="ConfirmLeaveBookClub"><i class="fas fa-sign-out-alt"></i></button>
         }
-        <button class="btn btn-secondary" @onclick="NavigateToBookClubList">Back to List</button>
+        <button class="btn btn-secondary" @onclick="NavigateToBookClubList"><i class="fas fa-arrow-left"></i></button>
     </div>
 
     @if (IsMember)
     {
         <div class="books-section">
             <h3>Books in this Club</h3>
-            <button class="btn btn-success mb-3" @onclick="OpenAddBookModal">Add Book</button>
+            <button class="btn btn-success mb-3" @onclick="OpenAddBookModal"><i class="fas fa-plus"></i></button>
             <div class="books-container">
                 @if (Books == null)
                 {
@@ -63,8 +64,10 @@ else
                                 <h5>@book.Title</h5>
                                 <p>@book.Author</p>
                                 <p>@book.Genres</p>
-                                <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
-                                <button class="btn btn-danger" @onclick="() => RemoveBookFromClub(book.BookId)">Remove</button>
+                                <div class="button-container">
+                                    <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)"><i class="fas fa-info-circle"></i></button>
+                                    <button class="btn btn-danger" @onclick="() => RemoveBookFromClub(book.BookId)"><i class="fas fa-trash"></i></button>
+                                </div>
                             </div>
                         </div>
                     }
@@ -104,32 +107,47 @@ else
 @if (IsAddBookModalVisible)
 {
     <div class="modal show d-block" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add a Book</h5>
+                    <h5 class="modal-title">Add Books to Club</h5>
                     <button type="button" class="btn-close" @onclick="CloseAddBookModal"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Form to add a book -->
-                    <div class="mb-3">
-                        <label for="bookTitle" class="form-label">Book Title</label>
-                        <input type="text" id="bookTitle" class="form-control" @bind="NewBookTitle">
+                    <div class="modal-buttons mb-3">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseAddBookModal">Cancel</button>
+                        <button type="button" class="btn btn-primary" @onclick="AddSelectedBooksToClub">Done</button>
                     </div>
-                    <div class="mb-3">
-                        <label for="bookAuthor" class="form-label">Book Author</label>
-                        <input type="text" id="bookAuthor" class="form-control" @bind="NewBookAuthor">
-                    </div>
-                    <!-- Add other book details as needed -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseAddBookModal">Cancel</button>
-                    <button type="button" class="btn btn-primary" @onclick="AddBookToClub">Add Book</button>
+                    <input type="text" class="form-control mb-3" placeholder="Search books..." @bind="addBookSearchTerm" @bind:event="oninput" />
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cover</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var book in FilteredBooks.Take(15))
+                            {
+                                <tr>
+                                    <td><img src="@book.Cover" alt="@book.Title" class="book-cover-small" /></td>
+                                    <td>@book.Title</td>
+                                    <td>@book.Author</td>
+                                    <td>
+                                        <input type="checkbox" @onchange="(e) => ToggleBookSelection(book.BookId, (bool)e.Value)" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 }
+
 
 <!-- Confirmation Modal for Leaving Book Club -->
 @if (IsLeaveConfirmationVisible)
@@ -153,17 +171,16 @@ else
     </div>
 }
 
-
 @code {
     [Parameter]
     public Guid bookClubId { get; set; }
-    [Inject]
-    public IDataService dataService { get; set; }
+
     public BookClubViewModel? BookClub { get; set; }
     public List<BookViewModel> Books { get; set; } = new();
     public List<ProfileViewModel> Members { get; set; } = new();
-    public ProfileViewModel CurrentUser { get; set; } = new ();
-
+    public ProfileViewModel CurrentUser { get; set; } = new();
+    public List<BookViewModel> AllBooks { get; set; } = new();
+    private List<Guid> SelectedBookIds { get; set; } = new();
 
     public int TotalReaders { get; set; } = 0;
     public bool IsMember { get; set; } = false;
@@ -171,13 +188,18 @@ else
     private bool IsMembersModalVisible { get; set; } = false;
     private bool IsAddBookModalVisible { get; set; } = false;
     private bool IsLeaveConfirmationVisible { get; set; } = false;
-    private string NewBookTitle { get; set; } = string.Empty;
-    private string NewBookAuthor { get; set; } = string.Empty;
+    private string addBookSearchTerm { get; set; } = string.Empty;
+
     private Guid CurrentUserId;
+    private List<BookViewModel> FilteredBooks =>
+       string.IsNullOrEmpty(addBookSearchTerm)
+           ? AllBooks
+           : AllBooks.Where(b => b.Title.Contains(addBookSearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                 b.Author.Contains(addBookSearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
     protected override async Task OnInitializedAsync()
     {
-        CurrentUserId = await dataService.GetItemAsync<Guid>("UserId");
+        CurrentUserId = await DataService.GetItemAsync<Guid>("UserId");
         CurrentUser = await UserDataService.GetUserByIdAsync(CurrentUserId);
         Console.WriteLine($"Current User Id: {CurrentUserId}");
         if (bookClubId != Guid.Empty)
@@ -215,7 +237,11 @@ else
         {
             NavigationManager.NavigateTo("/404");
         }
+        AllBooks = (await BookDataService.GetBooksAsync())
+           .Where(book => !BookClub.Books.Contains(book.BookId))
+           .ToList();
     }
+
 
     private void OpenMembersModal()
     {
@@ -254,19 +280,62 @@ else
 
     private async Task JoinBookClub()
     {
-       
-    }
 
+    }
 
     private async Task LeaveBookClub()
     {
-        //TODO
+
     }
 
-    private async Task AddBookToClub()
+    private async Task AddSelectedBooksToClub()
     {
-        //TODO
+        foreach (var bookId in SelectedBookIds)
+        {
+            if (!BookClub.Books.Contains(bookId))
+            {
+                // Add the book to the BookClub entity
+                BookClub.Books.Add(bookId);
+                var book = await BookDataService.GetBookByIdAsync(bookId);
+                if (book != null)
+                {
+                    Books.Add(book);
+                }
+                Console.WriteLine($"Bookclub id: {BookClub.BookClubId}");
+                // Update the book club in the database
+                var updatedBookClub = new BookClubViewModel
+                    {
+                        BookClubId = BookClub.BookClubId,
+                        Title = BookClub.Title,
+                        Description = BookClub.Description,
+                        Members = BookClub.Members,
+                        Books = BookClub.Books
+                    };
+
+                var response = await BookClubDataService.UpdateBookClubAsync(updatedBookClub);
+                if (!response.IsSuccess)
+                {
+                    Console.WriteLine($"Failed to update book club with book ID {bookId}");
+                }
+            }
+        }
+        SelectedBookIds.Clear();
+        CloseAddBookModal();
     }
+
+
+    private void ToggleBookSelection(Guid bookId, bool isSelected)
+    {
+        if (isSelected)
+        {
+            SelectedBookIds.Add(bookId);
+        }
+        else
+        {
+            SelectedBookIds.Remove(bookId);
+        }
+    }
+
 
     private async Task RemoveBookFromClub(Guid bookId)
     {
