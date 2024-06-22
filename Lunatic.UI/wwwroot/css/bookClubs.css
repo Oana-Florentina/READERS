@@ -1,42 +1,76 @@
-﻿.book-clubs-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-}
+﻿
 
-.book-club-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 250px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+h3 {
     text-align: center;
 }
 
-    .book-club-card h4 {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-    }
-
-    .book-club-card p {
-        margin: 5px 0;
-    }
-
-    .book-club-card .btn {
-        margin-top: 10px;
-    }
-
-.create-button {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    font-size: 24px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+.search-bar-container {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    width: 300px;
+    padding: 10px;
+    border-radius: 20px;
+    border: 2px solid #1679AB;
+    margin-right: 10px;
+}
+
+.create-button, .browse-button {
+    background-color: #1679AB;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.book-clubs-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.book-club-card {
+    background-color: #FFB1B1;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px;
+    text-align: center;
+    width: 200px; /* Ensure uniform width */
+    height: 250px; /* Ensure uniform height */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+    .book-club-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+.book-details {
+    margin-top: 10px;
+}
+    .book-details h5 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px; /* Add margin for spacing */
+    }
+
+.btn {
+    background-color: #1679AB;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
 }

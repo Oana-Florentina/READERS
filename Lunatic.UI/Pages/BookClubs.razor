@@ -9,41 +9,46 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bookClubs.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+
     <title>Book Clubs</title>
 </head>
 
 <h3>My Book Clubs</h3>
 
+<div class="search-bar-container">
+    <input type="text" class="search-bar" placeholder="Search by title..." @bind="searchTerm" @bind:event="oninput" />
+    <button class="btn btn-success create-button" @onclick="OpenCreateBookClubModal">
+        <i class="fas fa-plus"></i>
+    </button>
+    <button class="btn btn-info browse-button" @onclick="NavigateToBrowseBookClubs">
+        <i class="fas fa-globe"></i>
+    </button>
+</div>
+
 @if (isLoading)
 {
     <p><em>Loading...</em></p>
 }
-else if (!BookClubss.Any())
+else if (!FilteredBookClubs.Any())
 {
     <p>You are not a member of any book clubs.</p>
 }
 else
 {
     <div class="book-clubs-container">
-        @foreach (var bookClub in BookClubss)
+        @foreach (var bookClub in FilteredBookClubs)
         {
             <div class="book-club-card">
-                <h4>@bookClub.Title</h4>
-                <p><strong>Members:</strong> @bookClub.Members.Count</p>
-                <button class="btn btn-primary" @onclick="() => NavigateToBookClubDetails(bookClub.BookClubId)">Details</button>
+                <div class="book-details">
+                    <h5>@bookClub.Title</h5>
+                    <p><strong>Members:</strong> @bookClub.Members.Count</p>
+                    <button class="btn btn-primary" @onclick="() => NavigateToBookClubDetails(bookClub.BookClubId)">Details</button>
+                </div>
             </div>
         }
     </div>
 }
-
-<div class="buttons-container">
-    <button class="btn btn-success create-button" @onclick="OpenCreateBookClubModal">
-        <i class="fas fa-plus"></i> New Book Club
-    </button>
-    <button class="btn btn-info browse-button" @onclick="NavigateToBrowseBookClubs">
-        <i class="fas fa-search"></i> Browse Book Clubs
-    </button>
-</div>
 
 @if (IsCreateBookClubModalVisible)
 {
@@ -73,13 +78,58 @@ else
     </div>
 }
 
+@if (IsBrowseBookClubsModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Browse Book Clubs</h5>
+                    <button type="button" class="btn-close" @onclick="CloseBrowseBookClubsModal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" placeholder="Search book clubs..." @bind="browseSearchTerm" @bind:event="oninput" />
+                    <div class="book-clubs-container">
+                        @foreach (var bookClub in FilteredBrowsingBookClubs)
+                        {
+                            <div class="book-club-card">
+                                <h4>@bookClub.Title</h4>
+                                <p><strong>Members:</strong> @bookClub.Members.Count</p>
+                                <button class="btn btn-primary" @onclick="() => NavigateToBookClubDetails(bookClub.BookClubId)">Details</button>
+                            </div>
+                        }
+
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseBrowseBookClubsModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private List<BookClubViewModel> BookClubss { get; set; } = new();
+    private List<BookClubViewModel> BrowsingBookClubs { get; set; } = new();
     private bool isLoading { get; set; } = false;
     private bool IsCreateBookClubModalVisible { get; set; } = false;
+    private bool IsBrowseBookClubsModalVisible { get; set; } = false;
     private string NewBookClubTitle { get; set; } = string.Empty;
     private string NewBookClubDescription { get; set; } = string.Empty;
+    private string searchTerm { get; set; } = string.Empty;
+    private string browseSearchTerm { get; set; } = string.Empty;
     private Guid CurrentUserId { get; set; }
+
+    private List<BookClubViewModel> FilteredBookClubs =>
+        string.IsNullOrEmpty(searchTerm)
+            ? BookClubss
+            : BookClubss.Where(bc => bc.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+    private List<BookClubViewModel> FilteredBrowsingBookClubs =>
+        string.IsNullOrEmpty(browseSearchTerm)
+            ? BrowsingBookClubs
+            : BrowsingBookClubs.Where(bc => bc.Title.Contains(browseSearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,6 +138,7 @@ else
         {
             CurrentUserId = await DataService.GetItemAsync<Guid>("UserId");
             BookClubss = await UserDataService.GetBookClubsByUserIdAsync(CurrentUserId);
+            BrowsingBookClubs = await BookClubDataService.GetAllBookClubsAsync();
         }
         catch (Exception ex)
         {
@@ -125,7 +176,7 @@ else
         var createdBookClub = await BookClubDataService.CreateBookClubAsync(newBookClub);
         var createdBookClubId = createdBookClub.BookClubId;
 
-        
+
 
         if (createdBookClubId != Guid.Empty)
         {
@@ -136,9 +187,18 @@ else
             StateHasChanged();
         }
     }
-
     private void NavigateToBrowseBookClubs()
     {
-        NavigationManager.NavigateTo("/browseBookClubs");
+        OpenBrowseBookClubsModal();
+    }
+
+    private void OpenBrowseBookClubsModal()
+    {
+        IsBrowseBookClubsModalVisible = true;
+    }
+
+    private void CloseBrowseBookClubsModal()
+    {
+        IsBrowseBookClubsModalVisible = false;
     }
 }
