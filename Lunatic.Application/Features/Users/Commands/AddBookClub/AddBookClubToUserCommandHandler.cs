@@ -47,6 +47,9 @@ namespace Lunatic.Application.Features.Users.Commands.AddBookClub
             }
 
             userResult.Value.AddBookClub(request.BookClubId);
+            var bookClubResult = await this.bookClubRepository.FindByIdAsync(request.BookClubId);
+            bookClubResult.Value.addMember(request.UserId);
+            var dbBookClubResult = await this.bookClubRepository.UpdateAsync(bookClubResult.Value);
 
             var dbUserResult = await this.userRepository.UpdateAsync(userResult.Value);
 

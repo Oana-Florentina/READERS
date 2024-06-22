@@ -254,13 +254,7 @@ else
 
     private async Task JoinBookClub()
     {
-        var success = await BookClubDataService.JoinBookClub(CurrentUser, bookClubId);
-        if (success)
-        {
-            BookClub.Members.Add(CurrentUserId);
-            IsMember = true;
-            StateHasChanged();
-        }
+       
     }
 
 

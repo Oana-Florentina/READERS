@@ -18,6 +18,7 @@ using Lunatic.Application.Features.Users.Queries.GetFriendsRequests;
 using Lunatic.Application.Features.Users.Commands.DeleteFriendRequest;
 using Lunatic.Application.Features.Users.Queries.GetFriendsByUserId;
 using Lunatic.Application.Features.Users.Commands.AddBookClub;
+using Lunatic.Application.Features.Users.Queries.GetBookClubs;
 
 namespace Lunatic.API.Controllers {
 	public class UsersController : ApiControllerBase {
@@ -287,6 +288,20 @@ namespace Lunatic.API.Controllers {
                 return BadRequest(result);
             }
             return Ok(result);
+        }
+
+        [HttpGet("{userId}/bookClubs")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetBookClubsByUserIdQueryResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetBookClubsByUserIdQueryResponse), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetUsersBookClubs(Guid userId)
+        {
+            var result = await Mediator.Send(new GetBookClubsByUserIdQuery(userId));
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result.BookClubs);
         }
     }
 }

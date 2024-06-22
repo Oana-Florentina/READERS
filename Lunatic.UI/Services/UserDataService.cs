@@ -333,7 +333,6 @@ namespace Lunatic.UI.Services
 
             return filteredFriendRequests!;
         }
-
         public async Task<Response> DeleteFriendRequestAsync(Guid requestId, bool status)
         {
             httpClient.DefaultRequestHeaders.Authorization
@@ -345,7 +344,6 @@ namespace Lunatic.UI.Services
             response!.Success = result.IsSuccessStatusCode;
             return response!;
         }
-
         public async Task<List<UserViewModel>> GetFriendsByUserIdAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
@@ -362,7 +360,6 @@ namespace Lunatic.UI.Services
 
             return friends!;
         }
-
         public async Task<List<FriendRecommandationViewModel>> GetFriendRecommandationByUserIdAsync(Guid userId)
         {
             var token = await tokenService.GetTokenAsync();
@@ -390,8 +387,6 @@ namespace Lunatic.UI.Services
 
             return friendRecommandations!;
         }
-
-
         public async Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation)
         {
             var response = await httpClient.PostAsJsonAsync("api/v1/friendRecommandation", recommandation);
@@ -402,8 +397,64 @@ namespace Lunatic.UI.Services
                 PropertyNameCaseInsensitive = true
             })!;
         }
-        
+        public async Task<List<BookClubViewModel>> GetBookClubsByUserIdAsync(Guid userId)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
 
+            var response = await httpClient.GetAsync($"{RequestUri}/{userId}/bookclubs");
+            response.EnsureSuccessStatusCode();
 
+            var content = await response.Content.ReadAsStringAsync();
+            var bookClubs = JsonSerializer.Deserialize<List<BookClubViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            return bookClubs!;
+        }
+        public async Task<Response> AddBookClubToUserAsync(Guid userId, Guid bookClubId)
+        {
+            try
+            {
+                // Set Authorization Header
+                httpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", await tokenService.GetTokenAsync());
+
+                // Create the payload for the API request
+                var command = new
+                {
+                    UserId = userId,
+                    BookClubId = bookClubId
+                };
+
+                // Send the POST request
+                var result = await httpClient.PostAsJsonAsync($"{RequestUri}/{userId}/bookClub", command);
+
+                // Read the response content
+                var content = await result.Content.ReadAsStringAsync();
+                Console.WriteLine($"Response: {content}");
+
+                // Check if the request was successful
+                if (!result.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Error in AddBookClubToUserAsync call.");
+                    throw new ApplicationException($"API Error: {result.StatusCode} - {content}");
+                }
+                
+                // Deserialize the response
+                var response = JsonSerializer.Deserialize<Response>(content,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                return response!;
+            }
+            catch (Exception ex)
+            {
+                // Log exception details
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
+            }
+
+        }
     }
 }

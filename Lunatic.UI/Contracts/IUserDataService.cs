@@ -26,8 +26,9 @@ namespace Lunatic.UI.Contracts
         Task<List<UserViewModel>> GetFriendsByUserIdAsync(Guid userId);
         Task<List<FriendRecommandationViewModel>> GetFriendRecommandationByUserIdAsync(Guid userId);
         Task<SendFriendRecommandationResponse> SendFriendRecommandationAsync(FriendRecommandationViewModel recommandation);
+        Task<List<BookClubViewModel>> GetBookClubsByUserIdAsync(Guid userId);
 
-
+        Task<Response> AddBookClubToUserAsync(Guid userId, Guid bookClubId);
 
     }
 }

@@ -3,6 +3,8 @@
 @using Lunatic.UI.ViewModels
 @inject IBookClubDataService BookClubDataService
 @inject NavigationManager NavigationManager
+@inject IDataService DataService
+@inject IUserDataService UserDataService
 
 <head>
     <meta charset="UTF-8">
@@ -10,7 +12,7 @@
     <title>Book Clubs</title>
 </head>
 
-<h3>Book Clubs</h3>
+<h3>My Book Clubs</h3>
 
 @if (isLoading)
 {
@@ -18,7 +20,7 @@
 }
 else if (!BookClubss.Any())
 {
-    <p>No book clubs available.</p>
+    <p>You are not a member of any book clubs.</p>
 }
 else
 {
@@ -34,20 +36,58 @@ else
     </div>
 }
 
-<button class="btn btn-success create-button" @onclick="NavigateToCreateBookClub">
-    <i class="fas fa-plus"></i>
-</button>
+<div class="buttons-container">
+    <button class="btn btn-success create-button" @onclick="OpenCreateBookClubModal">
+        <i class="fas fa-plus"></i> New Book Club
+    </button>
+    <button class="btn btn-info browse-button" @onclick="NavigateToBrowseBookClubs">
+        <i class="fas fa-search"></i> Browse Book Clubs
+    </button>
+</div>
+
+@if (IsCreateBookClubModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Book Club</h5>
+                    <button type="button" class="btn-close" @onclick="CloseCreateBookClubModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="clubTitle" class="form-label">Title</label>
+                        <input type="text" id="clubTitle" class="form-control" @bind="NewBookClubTitle">
+                    </div>
+                    <div class="mb-3">
+                        <label for="clubDescription" class="form-label">Description</label>
+                        <textarea id="clubDescription" class="form-control" @bind="NewBookClubDescription"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseCreateBookClubModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="CreateBookClub">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private List<BookClubViewModel> BookClubss { get; set; } = new();
     private bool isLoading { get; set; } = false;
+    private bool IsCreateBookClubModalVisible { get; set; } = false;
+    private string NewBookClubTitle { get; set; } = string.Empty;
+    private string NewBookClubDescription { get; set; } = string.Empty;
+    private Guid CurrentUserId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         isLoading = true;
         try
         {
-            BookClubss = await BookClubDataService.GetAllBookClubsAsync();
+            CurrentUserId = await DataService.GetItemAsync<Guid>("UserId");
+            BookClubss = await UserDataService.GetBookClubsByUserIdAsync(CurrentUserId);
         }
         catch (Exception ex)
         {
@@ -64,8 +104,41 @@ else
         NavigationManager.NavigateTo($"/bookClub/{bookClubId}");
     }
 
-    private void NavigateToCreateBookClub()
+    private void OpenCreateBookClubModal()
     {
-        NavigationManager.NavigateTo("/createBookClub");
+        IsCreateBookClubModalVisible = true;
+    }
+
+    private void CloseCreateBookClubModal()
+    {
+        IsCreateBookClubModalVisible = false;
+    }
+
+    private async Task CreateBookClub()
+    {
+        var newBookClub = new BookClubViewModel
+            {
+                Title = NewBookClubTitle,
+                Description = NewBookClubDescription,
+                Members = new List<Guid> { CurrentUserId }
+            };
+        var createdBookClub = await BookClubDataService.CreateBookClubAsync(newBookClub);
+        var createdBookClubId = createdBookClub.BookClubId;
+
+        
+
+        if (createdBookClubId != Guid.Empty)
+        {
+            newBookClub.BookClubId = createdBookClubId;
+            BookClubss.Add(newBookClub);
+            await UserDataService.AddBookClubToUserAsync(CurrentUserId, createdBookClubId);
+            CloseCreateBookClubModal();
+            StateHasChanged();
+        }
+    }
+
+    private void NavigateToBrowseBookClubs()
+    {
+        NavigationManager.NavigateTo("/browseBookClubs");
     }
 }

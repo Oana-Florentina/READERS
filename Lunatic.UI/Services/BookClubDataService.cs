@@ -1,6 +1,7 @@
 ﻿using Lunatic.UI.Contracts;
 using Lunatic.UI.Services.Responses;
 using Lunatic.UI.ViewModels;
+using Lunatic.UI.Payload;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -54,52 +55,21 @@ namespace Lunatic.UI.Services
 
             return bookClubViewModel!;
         }
-        public async Task<bool> JoinBookClub(ProfileViewModel CurrentUser, Guid bookClubId)
+        
+
+        public async Task<BookClubDto> CreateBookClubAsync(BookClubViewModel bookClub)
         {
-            if (CurrentUser != null)
+            var createBookClubResponse = await httpClient.PostAsJsonAsync("api/v1/bookclub", bookClub);
+            createBookClubResponse.EnsureSuccessStatusCode();
+            var content = await createBookClubResponse.Content.ReadAsStringAsync();
+            var createdBookClub = JsonSerializer.Deserialize<CreateBookClubResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if(createdBookClub == null)
             {
-                Console.WriteLine($"User: {CurrentUser.UserId}");
-                var updateUserPayload = new
-                {
-                    userId = CurrentUser.UserId,
-                    firstName = CurrentUser.FirstName,
-                    lastName = CurrentUser.LastName,
-                    email = CurrentUser.Email,
-                    bookClub = bookClubId
-                };
-                Console.WriteLine(updateUserPayload);
-                var updateUserResponse = await httpClient.PutAsJsonAsync($"api/v1/users/{CurrentUser.UserId}", updateUserPayload);
-
-                if (updateUserResponse.IsSuccessStatusCode)
-                {
-                    var bookClub = await GetBookClubByIdAsync(bookClubId);
-                    Console.WriteLine(bookClub.Members);
-                    if (bookClub != null)
-                    {
-                        bookClub.Members!.Add(CurrentUser.UserId);
-                        
-                          
-
-                        var updateBookClubPayload = new
-                        {
-                            bookClub = bookClub.BookClubId,
-                            title = bookClub.Title,
-                            description = bookClub.Description,
-                            books = bookClub.Books,
-                            members = bookClub.Members
-                        };
-
-                        var updateBookClubResponse = await httpClient.PutAsJsonAsync($"api/v1/bookclub/{bookClubId}", updateBookClubPayload);
-
-                        return updateBookClubResponse.IsSuccessStatusCode;
-                    }
-                }
+                throw new ApplicationException("Cannot create book club");
             }
-
-            return false;
+            return createdBookClub.BookClub!;
+            
         }
-
-
 
 
 
