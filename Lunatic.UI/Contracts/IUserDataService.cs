@@ -29,6 +29,8 @@ namespace Lunatic.UI.Contracts
         Task<List<BookClubViewModel>> GetBookClubsByUserIdAsync(Guid userId);
 
         Task<Response> AddBookClubToUserAsync(Guid userId, Guid bookClubId);
+        Task<List<BookViewModel>> RecommendBooksAsync(Guid userId);
+        Task<HttpResponseMessage> UpdateUserAsync(Guid userId, ProfileViewModel updatedUser);
 
     }
 }

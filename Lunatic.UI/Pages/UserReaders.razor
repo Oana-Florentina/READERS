@@ -12,6 +12,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css\books.css">
+    <link rel="stylesheet" href="css\readers.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <title>Books I Have Read</title>
@@ -41,11 +42,14 @@ else
                    
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-primary btn-sm" @onclick="() => ShowDetails(book.BookId)">Details</button>
+                    <div class="button-container">
+                    <button class="btn btn-primary btn-sm" @onclick="() => NavigateToBook(book.BookId)">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
                     <button class="btn btn-outline-primary btn-sm" @onclick="() => ToggleFavorite(book)">
                         <i class="@GetHeartClass(book.IsFavorite)"></i>
                     </button>
-
+                    </div>
                 </div>
             </div>
         }

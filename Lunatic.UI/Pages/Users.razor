@@ -9,81 +9,86 @@
     <link rel="stylesheet" href="css/users.css">
     <title>Users and Friends</title>
 </head>
-<h3>Users and Friends</h3>
+<body>
+    <div class="container">
+        <h3>Users and Friends</h3>
 
-<input type="text" class="search-bar" placeholder="Search by username..." @bind="searchTerm" @bind:event="oninput" />
+        <input type="text" class="search-bar" placeholder="Search by username..." @bind="searchTerm" @bind:event="oninput" />
 
-<div class="columns">
-    <div class="column">
-        <h4>My Friends</h4>
-        @if (FriendsList == null || !FriendsList.Any())
-        {
-            <p><em>You have no friends added.</em></p>
-        }
-        else
-        {
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var friend in FriendsList)
-                    {
-                        <tr>
-                            <td>@friend.Username</td>
-                            <td>
-                                <button class="btn btn-secondary" @onclick="() => RemoveFriend(friend.UserId)">Remove</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
+        <div class="columns">
+            <div class="column">
+                <h4>My Friends</h4>
+                @if (FriendsList == null || !FriendsList.Any())
+                {
+                    <p><em>You have no friends added.</em></p>
+                }
+                else
+                {
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var friend in FriendsList)
+                            {
+                                <tr>
+                                    <td>@friend.Username</td>
+                                    <td>
+                                        <button class="btn btn-secondary" @onclick="() => RemoveFriend(friend.UserId)">Remove</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+            <div class="column">
+                <h4>Find New Friends</h4>
+                @if (FilteredUsers == null)
+                {
+                    <p><em>Loading...</em></p>
+                }
+                else if (!FilteredUsers.Any())
+                {
+                    <p>No users found.</p>
+                }
+                else
+                {
+                    <table class="styled-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in FilteredUsers)
+                            {
+                                <tr>
+                                    <td>@user.Username</td>
+                                    <td>
+                                        @if (FriendsList.Any(f => f.UserId == user.UserId))
+                                        {
+                                            <button class="btn btn-secondary" disabled>Already Friends</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-primary" @onclick="() => SendFriendRequest(user.UserId)">Add Friend</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
     </div>
-    <div class="column">
-        <h4>Find New Friends</h4>
-        @if (FilteredUsers == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else if (!FilteredUsers.Any())
-        {
-            <p>No users found.</p>
-        }
-        else
-        {
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>Username</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in FilteredUsers)
-                    {
-                        <tr>
-                            <td>@user.Username</td>
-                            <td>
-                                @if (FriendsList.Any(f => f.UserId == user.UserId))
-                                {
-                                    <button class="btn btn-secondary" disabled>Already Friends</button>
-                                }
-                                else
-                                {
-                                    <button class="btn btn-primary" @onclick="() => SendFriendRequest(user.UserId)">Add Friend</button>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-    </div>
-</div>
+</body>
+
 
 @code {
     private string searchTerm = string.Empty;

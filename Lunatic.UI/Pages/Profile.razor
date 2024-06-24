@@ -2,15 +2,17 @@
 @using Lunatic.UI.Contracts
 @using Lunatic.UI.ViewModels
 @using Blazored.LocalStorage;
-
-
 @inject IUserDataService UserDataService
 @inject NavigationManager NavigationManager
+@inject IDataService DataService
+
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css\profile.css">
-    <title>Book details</title>
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
+    <title>User Profile</title>
 </head>
+
 <h3>User Profile</h3>
 
 @if (User == null)
@@ -19,54 +21,99 @@
 }
 else
 {
-    <div class="profile-details">
-        <h4>@User.Username's Profile</h4>
-        <p><strong>First Name:</strong> @User.FirstName</p>
-        <p><strong>Last Name:</strong> @User.LastName</p>
-        <p><strong>Email:</strong> @User.Email</p>
-        <p><strong>Username:</strong> @User.Username</p>
+    <div class="profile-details card">
+        <div class="card-body">
+            <h4 class="card-title">@User.Username's Profile</h4>
+            <p class="card-text"><strong>First Name:</strong> @User.FirstName</p>
+            <p class="card-text"><strong>Last Name:</strong> @User.LastName</p>
+            <p class="card-text"><strong>Email:</strong> @User.Email</p>
+            <p class="card-text"><strong>Username:</strong> @User.Username</p>
 
-       
-        
-       
+            <button class="btn btn-primary" @onclick="OpenEditProfileModal"><i class="fas fa-edit"></i> Edit Profile</button>
+            <button class="btn btn-danger" @onclick="NavigateToLogin"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </div>
+}
 
-        <!-- Action Buttons -->
-        <button class="btn btn-primary" @onclick="EditProfile">Edit Profile</button>
-        <button class="btn btn-lg btn-primary btn-block" @onclick="NavigateToLogin">Logout</button>
+@if (IsEditProfileModalVisible)
+{
+    <div class="modal show d-block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" @onclick="CloseEditProfileModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" id="firstName" class="form-control" @bind="User.FirstName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" class="form-control" @bind="User.LastName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" @bind="User.Email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" id="username" class="form-control" @bind="User.Username">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseEditProfileModal">Cancel</button>
+                    <button type="button" class="btn btn-primary" @onclick="SaveProfileChanges">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 }
 
 @code {
-    [Parameter]
-    public Guid userId { get; set; }
-    [Inject]
-    public ITokenService tokenService { get; set; }
-    [Inject]
-    public IDataService dataService { get; set; }
-
     public ProfileViewModel? User { get; set; }
+    private bool IsEditProfileModalVisible { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var userId = await dataService.GetItemAsync<Guid>("UserId");
-
+            var userId = await DataService.GetItemAsync<Guid>("UserId");
             User = await UserDataService.GetUserByIdAsync(userId);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading profile: {ex.Message}");
-            // Handle the error (e.g., redirect to login or show a message)
-           
         }
-        
     }
 
-    private void EditProfile()
+    private void OpenEditProfileModal()
     {
-        NavigationManager.NavigateTo($"/editProfile");
+        IsEditProfileModalVisible = true;
     }
+
+    private void CloseEditProfileModal()
+    {
+        IsEditProfileModalVisible = false;
+    }
+
+    private async Task SaveProfileChanges()
+    {
+        if (User != null)
+        {
+            var response = await UserDataService.UpdateUserAsync(User.UserId, User);
+            if (response.IsSuccessStatusCode)
+            {
+                CloseEditProfileModal();
+            }
+            else
+            {
+                Console.WriteLine("Failed to update profile.");
+            }
+        }
+    }
+
     private void NavigateToLogin()
     {
         NavigationManager.NavigateTo("/login");

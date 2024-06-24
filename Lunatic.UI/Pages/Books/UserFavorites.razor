@@ -34,12 +34,11 @@ else
                 <div class="book-details">
                     <h5>@book.Title</h5>
                     <p><strong>Author:</strong> @book.Author</p>
-                    <p><strong>Year:</strong> @book.Year</p>
                    
                 </div>
                 <div class="card-footer">
                     <button class="btn btn-primary btn-sm" @onclick="() => NavigateToBook(book.BookId)">
-                        View Details
+                        <i class="fas fa-info-circle"></i>
                     </button>
                 </div>
             </div>

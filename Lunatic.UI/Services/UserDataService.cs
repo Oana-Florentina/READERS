@@ -10,6 +10,7 @@ using System.Collections.Frozen;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Json;
 
 namespace Lunatic.UI.Services
@@ -19,11 +20,13 @@ namespace Lunatic.UI.Services
         private const string RequestUri = "api/v1/users"; 
         private readonly HttpClient httpClient;
         private readonly ITokenService tokenService;
+        private readonly IBookDataService bookDataService;
 
-        public UserDataService(HttpClient httpClient, ITokenService tokenService)
+        public UserDataService(HttpClient httpClient, ITokenService tokenService, IBookDataService bookDataService)
         {
             this.httpClient = httpClient;
             this.tokenService = tokenService;
+            this.bookDataService = bookDataService;
         }
         public async Task<List<UserViewModel>> GetUsersAsync()
         {
@@ -72,6 +75,8 @@ namespace Lunatic.UI.Services
                 LastName = response.User.LastName,
                 Email = response.User.Email,
                 WantToReadIds = response.User.WantToReadIds,
+                ReaderIds = response.User.ReaderIds,
+                FavoriteIds = response.User.FavoriteIds,
             };
             return profileViewModel!;
         }
@@ -456,5 +461,89 @@ namespace Lunatic.UI.Services
             }
 
         }
+        public async Task<HttpResponseMessage> UpdateUserAsync(Guid userId, ProfileViewModel updatedUser)
+        {
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            var userJson = JsonSerializer.Serialize(updatedUser);
+            var content = new StringContent(userJson, Encoding.UTF8, "application/json");
+
+            var response = await httpClient.PutAsync($"{RequestUri}/{userId}", content);
+            return response;
+        }
+
+        public async Task<List<BookViewModel>> RecommendBooksAsync(Guid userId)
+        {
+            // Fetch user data
+            var user = await GetUserByIdAsync(userId);
+
+            // Collect books from favorites, readers, and want-to-read lists
+            var favoriteBooks = await GetFavsByUserIdAsync(userId);
+            var readerBooks = await GetBooksIReadByIdsAsync(userId);
+            var wantToReadBooks = await GetBooksIWantToReadByIdsAsync(userId);
+
+            var allBooks = favoriteBooks.Concat(readerBooks).Concat(wantToReadBooks).ToList();
+
+            // If no data is available, return 3 random books
+            if (!allBooks.Any())
+            {
+                Console.WriteLine("No user data available for recommendations. Returning random books.");
+                return await GetRandomBooksAsync(3);
+            }
+
+            // Create a recommendation pool based on genres, authors, and descriptions
+            var recommendedBooks = new List<BookViewModel>();
+            var genres = new HashSet<string>();
+            var authors = new HashSet<string>();
+
+            foreach (var book in allBooks)
+            {
+                genres.UnionWith(book.Genres.Split(',').Select(g => g.Trim()));
+                authors.Add(book.Author);
+            }
+
+            // Fetch all books and filter by genres and authors
+            var allAvailableBooks = await bookDataService.GetBooksAsync();
+            foreach (var book in allAvailableBooks)
+            {
+                if (genres.Any(genre => book.Genres.Split(',').Select(g => g.Trim()).Contains(genre)) || authors.Contains(book.Author))
+                {
+                    recommendedBooks.Add(book);
+                    Console.WriteLine($"Recommended book: {book.Title}");
+                }
+            }
+            var rng = new Random();
+            recommendedBooks = recommendedBooks.OrderBy(book => rng.Next()).ToList();
+
+            // If not enough recommendations, fill with random books
+            if (recommendedBooks.Count < 3)
+            {
+                Console.WriteLine("Not enough recommendations. Filling with random books.");
+                var randomBooks = await GetRandomBooksAsync(3 - recommendedBooks.Count);
+                recommendedBooks.AddRange(randomBooks);
+            }
+            
+            // Return top 3 recommendations
+            return recommendedBooks.Take(3).ToList();
+        }
+
+
+        private async Task<List<BookViewModel>> GetRandomBooksAsync(int count)
+        {
+            // Fetch all books
+            var result = await httpClient.GetAsync($"api/v1/books");
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            var allBooks = JsonSerializer.Deserialize<List<BookViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Select random books
+            var randomBooks = allBooks.OrderBy(x => Guid.NewGuid()).Take(count).ToList();
+            return randomBooks;
+        }
+       
     }
 }

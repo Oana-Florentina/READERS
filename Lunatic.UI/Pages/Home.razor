@@ -18,10 +18,12 @@
 <PageTitle>Home</PageTitle>
 <body>
 <div class="home-page">
-    <div class="header">
-        <h1>Welcome!</h1>
-        <div class="date">@currentDate</div>
-    </div>
+        <div class="header">
+            <div class="welcome-text">
+                <h2>Welcome to Readers!</h2>
+            </div>
+        </div>
+
 
     <div class="notifications-section">
             <button class="notifications-button" @onclick="ToggleFriendRequests">
@@ -41,15 +43,17 @@
                 <div class="friend-requests-list">
                     @foreach (var request in FriendRequests)
                     {
-                        <div class="friend-request-item">
-                            <p><strong>@FriendRequestSenders[request.SenderId]</strong> wants to be your friend!</p>
-                            <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(request.FriendRequestId)">
-                                <i class="fas fa-check"></i> Accept
-                            </button>
-                            <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(request.FriendRequestId)">
-                                <i class="fas fa-times"></i> Decline
-                            </button>
-                        </div>
+                            <div class="friend-request-item">
+                                <p><strong>@FriendRequestSenders[request.SenderId]</strong> wants to be your friend!</p>
+                                <div class="button-container">
+                                    <button class="btn btn-primary" @onclick="() => AcceptFriendRequest(request.FriendRequestId)">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-secondary" @onclick="() => DeclineFriendRequest(request.FriendRequestId)">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
                     }
                             @foreach (var request in FriendRecommandations)
                             {
@@ -70,72 +74,78 @@
 
     <div class="quote-section">
         <div class="quote-container">
-            <blockquote>"Be yourself; everyone else is already taken." - Oscar Wilde</blockquote>
+                <blockquote>"A reader lives a thousand lives before he dies. The man who never reads lives only one." - George R.R. Martin</blockquote>
         </div>
     </div>
-
-    <div class="for-you-section">
-        <h2>For You</h2>
-        <div class="books-container">
-            @if (RecommendedBooks == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else if (!RecommendedBooks.Any())
-            {
-                <p>No books available.</p>
-            }
-            else
-            {
-                @foreach (var book in RecommendedBooks.Take(3))
-                {
-                    <div class="book-card">
-                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
-                        <div class="book-details">
-                            <h5>@book.Title</h5>
-                            <p>@book.Author</p>
-                            <p>@book.Genres</p>
-                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">Details</button>
+        <div class="book-sections-container">
+            <div class="for-you-section">
+                <h2>For You</h2>
+                <div class="books-container">
+                    @if (RecommendedBooks == null)
+                    {
+                        <p><em>Loading...</em></p>
+                    }
+                    else if (!RecommendedBooks.Any())
+                    {
+                        <p>No books available.</p>
+                    }
+                    else
+                    {
+                        <div class="books-container">
+                            @foreach (var book in RecommendedBooks.Take(3))
+                            {
+                                <div class="book-card">
+                                    <img src="@book.Cover" alt="Book cover">
+                                    <div class="book-details">
+                                        <h5>@book.Title</h5>
+                                        <p><strong>Author:</strong> @book.Author</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-primary btn-sm" @onclick="() => NavigateToBook(book.BookId)">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                    </div>
-                }
-            }
-        </div>
-    </div>
+                    }
+                </div>
+            </div>
 
-    <div class="for-you-section">
-        <h2>Popular Now</h2>
-        <div class="books-container">
-            @if (PopularBooks == null)
-            {
-                <p><em>Loading...</em></p>
-            }
-            else if (!PopularBooks.Any() || PopularBooks.Count < 3)
-            {
-                <p>No books available.</p>
-            }
-            else
-            {
-                @foreach (var book in PopularBooks.Take(3))
-                {
-                    <div class="book-card">
-                        <img src="@book.Cover" alt="@book.Title" class="book-cover" />
-                        <div class="book-details">
-                            <h5>@book.Title</h5>
-                            <p>@book.Author</p>
-                            <p>@book.Genres</p>
-                            <button class="btn btn-primary" @onclick="() => NavigateToBook(book.BookId)">
-                                <i class="fas fa-info-circle"></i> Details
-                            </button>
+            <div class="for-you-section">
+                <h2>Popular Now</h2>
+                <div class="books-container">
+                    @if (PopularBooks == null)
+                    {
+                        <p><em>Loading...</em></p>
+                    }
+                    else if (!PopularBooks.Any() || PopularBooks.Count < 3)
+                    {
+                        <p>No books available.</p>
+                    }
+                    else
+                    {
+                        <div class="books-container">
+                            @foreach (var book in PopularBooks.Take(3))
+                            {
+                                <div class="book-card">
+                                    <img src="@book.Cover" alt="Book cover">
+                                    <div class="book-details">
+                                        <h5>@book.Title</h5>
+                                        <p><strong>Author:</strong> @book.Author</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-primary btn-sm" @onclick="() => NavigateToBook(book.BookId)">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                    </div>
-                }
-            }
-
+                    }
+                </div>
+            </div>
         </div>
-    </div>
-
-
 </div>
 </body>
 @code {
@@ -175,8 +185,9 @@
             FriendRequests = (await UserDataService.GetFriendRequestsByUserIdAsync(userId)).ToList();
             FriendRecommandations = await UserDataService.GetFriendRecommandationByUserIdAsync(userId);
             TotalNotifications = FriendRequests.Count + FriendRecommandations.Count;
-
-            Console.WriteLine("FriendRecommandation: " + FriendRecommandations.Count);
+            RecommendedBooks = await UserDataService.RecommendBooksAsync(userId);
+            PopularBooks = await BookDataService.GetPopularBooksAsync();
+            
 
             foreach (var request in FriendRequests)
             {
@@ -191,7 +202,6 @@
             foreach (var request in FriendRecommandations)
             {
                 var senderProfile = await UserDataService.GetUserByIdAsync(request.SenderId);
-                Console.WriteLine($"senderProfile:  {senderProfile.Username}");
                 if (senderProfile != null)
                 {
                     FriendRecommandationSenders[request.SenderId] = senderProfile.Username;
@@ -205,13 +215,8 @@
             }
 
 
-            PopularBooks = await BookDataService.GetPopularBooksAsync();
-            foreach (var book in PopularBooks)
-            {
-                Console.WriteLine("book title: " + book.Title);
-            }
-            Console.WriteLine("Popular Books: " + PopularBooks.Count);
-            RecommendedBooks = (await BookDataService.GetBooksAsync()).ToList();
+          
+           
             Books = (await BookDataService.GetBooksAsync()).ToList();
         }
         catch (Exception ex)

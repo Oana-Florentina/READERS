@@ -8,7 +8,8 @@
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public List<Guid> WantToReadIds { get;  set; } = new List<Guid>();
-        public List<Guid> ReaderIds { get; set; } = new();
+        public List<Guid> ReaderIds { get; set; } = new List<Guid>();
+        public List<Guid> FavoriteIds { get; set; } = new List<Guid>();
 
     }
 }

@@ -10,7 +10,7 @@ namespace Lunatic.UI.Payload
         public string Email { get; set; } = default!;
         public string Username { get; set; } = default!;
         public List<Guid> BookClubIds { get; private set; } = new List<Guid>();
-
+        public List<Guid> ReaderIds { get; private set; } = new List<Guid>();
         public List<Guid> WantToReadIds { get; private set; } = new List<Guid>();
         public List<Guid> FavoriteIds { get; private set; } = new List<Guid>();
     }
