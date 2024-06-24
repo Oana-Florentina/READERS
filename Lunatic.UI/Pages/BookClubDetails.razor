@@ -10,6 +10,8 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bookClubDetails.css">
+    <link rel="stylesheet" href="css/books.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-SZXxX4whJ79/gErwcOYf+zWLeJdY/qpuqC4cAa9rOGUstPomtqpuNWT9wdPEn2fk" crossorigin="anonymous">
     <title>Book Club Details</title>
 </head>
@@ -44,7 +46,9 @@ else
     {
         <div class="books-section">
             <h3>Books in this Club</h3>
-            <button class="btn btn-success mb-3" @onclick="OpenAddBookModal"><i class="fas fa-plus"></i></button>
+            <div class="buttonx-container">
+                <button class="btn btn-primary mb-3" @onclick="OpenAddBookModal"><i class="fas fa-plus"></i></button>
+            </div>
             <div class="books-container">
                 @if (Books == null)
                 {

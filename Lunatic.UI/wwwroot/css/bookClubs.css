@@ -34,6 +34,10 @@ h3 {
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    background-color: rgba(249, 249, 249, 0.2);
+    border-radius: 10px;
+   
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .book-club-card {
@@ -42,18 +46,20 @@ h3 {
     padding: 15px;
     margin: 10px;
     text-align: center;
-    width: 200px;
-    height: 250px;
+    width: 220px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
-.book-club-card h4{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 10px; /* Add margin for spacing */
-}
+    .book-club-card h5 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+        margin-bottom: 10px; /* Add margin for spacing */
+        max-width: 180px; /* Ensuring the text stays within the card boundaries */
+    }
 
     .book-club-card img {
         width: 100%;
@@ -70,6 +76,7 @@ h3 {
         overflow: hidden;
         text-overflow: ellipsis;
         margin-bottom: 10px; /* Add margin for spacing */
+        text-align: center;
     }
 
 .btn {

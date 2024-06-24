@@ -2,7 +2,7 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: rgba(249, 249, 249, 0.3);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     max-width: 600px;
     margin: 0 auto;
@@ -30,15 +30,16 @@
         font-size: 1em;
         cursor: pointer;
         border-radius: 5px;
-        margin-top: 20px;
+        margin: 0 5px;
     }
 
-    .book-club-details .btn-success {
-        background-color: #28a745;
-    }
+    
 
     .book-club-details .btn-secondary {
         background-color: #6c757d;
+    }
+    .book-club-details .btn-danger {
+        background-color: darkred;
     }
 
     .book-club-details .btn:hover {
@@ -48,51 +49,13 @@
 .books-section {
     margin: 20px;
 }
-
-.books-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-}
-
-.book-card {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 200px;
-    padding: 10px;
-    height: 300px;
-    font-size: 10px;
-    text-align: center;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-    .book-card img {
-        width: 100px;
-        height: 150px;
-        margin-bottom: 10px;
+    .books-section button {
+        background-color: #FFB1B1;
+        display: flex;
+        justify-content: space-around;
     }
 
-.book-details {
-    justify-content: center;
-}
-    .book-details h5 {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        margin-bottom: 10px; /* Add margin for spacing */
-    }
-.book-card h5 {
-    font-size: 1.1em;
-    margin: 5px 0;
-}
 
-.book-card p {
-    margin: 3px 0;
-}
 
 .card-footer {
     margin-top: 10px;
@@ -168,4 +131,12 @@
 .button-container .btn {
     flex: 1;
     margin: 0 5px;
+}
+.buttonx-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px; /* Adjust if necessary */
+}
+.book-details .btn-danger {
+    background-color: darkred;
 }
