@@ -1,6 +1,7 @@
 ﻿using Lunatic.Application.Features.Ratings.Commands.CreateRating;
 using Lunatic.Application.Features.Ratings.Commands.DeleteRating;
 using Lunatic.Application.Features.Ratings.Commands.UpdateRating;
+using Lunatic.Application.Features.Ratings.Queries.GetRatingsByBookId;
 using Lunatic.Application.Features.Ratings.Queries.GetAll;
 using Lunatic.Application.Features.Readers.Commands.UpdateReader;
 using Microsoft.AspNetCore.Mvc;
@@ -36,19 +37,19 @@ namespace Lunatic.API.Controllers
             return Ok(result);
         }
 
-       /* [HttpGet("{bookId}")]
+        [HttpGet("{bookId}")]
         [Produces("application/json")]
-        [ProducesResponseType<GetByIdBookQueryResponse>(StatusCodes.Status200OK)]
-        [ProducesResponseType<GetByIdBookQueryResponse>(StatusCodes.Status404NotFound)]
+        [ProducesResponseType<GetRatingsByBookIdQueryResponse>(StatusCodes.Status200OK)]
+        [ProducesResponseType<GetRatingsByBookIdQueryResponse>(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(Guid bookId)
         {
-            var result = await Mediator.Send(new GetByIdBookQuery(bookId));
+            var result = await Mediator.Send(new GetRatingsByBookIdQuery(bookId));
             if (!result.Success)
             {
                 return NotFound(result);
             }
             return Ok(result);
-        }*/
+        }
 
         [HttpDelete("{ratingId}")]
         [Produces("application/json")]

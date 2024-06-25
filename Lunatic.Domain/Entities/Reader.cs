@@ -20,5 +20,6 @@ namespace Lunatic.Domain.Entities
         public DateTime EndDate { get; private set; }
         public Guid RatingId { get; private set; }
         public bool IsFavorite { get; private set; }
+
     }
 }

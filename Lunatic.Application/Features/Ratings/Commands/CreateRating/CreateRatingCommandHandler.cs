@@ -47,7 +47,9 @@ namespace Lunatic.Application.Features.Ratings.Commands.CreateRating
             );
 
             await this.ratingRepository.AddAsync(rating);
-
+            var Book = await this.bookRepository.FindByIdAsync(request.BookId);
+            Book.Value.AddRating(rating.RatingId);
+            var dbBookResult = await this.bookRepository.UpdateAsync(Book.Value);
             return new CreateRatingCommandResponse
             {
                 Success = true,

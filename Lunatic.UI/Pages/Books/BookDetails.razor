@@ -38,6 +38,27 @@ else
             <i class="fas fa-user-plus"></i> Recommend to Friend
         </button>
     </div>
+
+    <!-- Ratings Section -->
+    <div class="ratings-section">
+        <h4>Ratings</h4>
+        @if (Ratings == null || !Ratings.Any())
+        {
+            <p>No ratings available for this book.</p>
+        }
+        else
+        {
+            <ul class="ratings-list">
+                @foreach (var rating in Ratings)
+                {
+                    <li>
+                        <p><strong>Score:</strong> @rating.Score</p>
+                        <p><strong>Comment:</strong> @rating.CommentMessage</p>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
 }
 
 <!-- Modal for Adding to Read Books -->
@@ -112,12 +133,12 @@ else
     </div>
 }
 
-
 @code {
     [Parameter]
     public Guid bookId { get; set; }
 
     public BookViewModel? Book { get; set; }
+    public List<RatingViewModel>? Ratings { get; set; }
     public FriendRequestViewModel FriendRequest { get; set; }
 
     [Inject]
@@ -146,6 +167,9 @@ else
         if (bookId != Guid.Empty)
         {
             Book = await BookDataService.GetBookByIdAsync(bookId);
+
+            // Fetch ratings for the book
+            Ratings = await RatingDataService.GetRatingsByBookIdAsync(bookId);
 
             // Fetch friends and map to FriendViewModel
             var friends = await UserDataService.GetFriendsByUserIdAsync(userId);

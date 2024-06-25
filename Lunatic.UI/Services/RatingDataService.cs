@@ -90,5 +90,18 @@ namespace Lunatic.UI.Services
 
             return response!;
         }
+
+        public async Task<List<RatingViewModel>> GetRatingsByBookIdAsync(Guid bookId)
+        {
+            var result = await httpClient.GetAsync($"{RequestUri}/{bookId}");
+            result.EnsureSuccessStatusCode();
+            var content = await result.Content.ReadAsStringAsync();
+            if (!result.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(content);
+            }
+            var ratings = JsonSerializer.Deserialize<List<RatingViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return ratings!;
+        }
     }
 }

@@ -22,6 +22,11 @@ namespace Lunatic.Domain.Entities
         public string Genres { get; private set; } 
         public string Description { get; private set; }
         public List<Guid> Ratings { get; private set; } = new List<Guid>();
-        public string Cover { get; private set; } //the urle to the cover image
+        public string Cover { get; private set; } 
+
+        public void AddRating(Guid ratingId)
+        {
+            Ratings.Add(ratingId);
+        }
     }
 }

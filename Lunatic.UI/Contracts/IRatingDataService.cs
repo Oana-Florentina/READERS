@@ -11,6 +11,7 @@ namespace Lunatic.UI.Contracts
     {
         Task<List<RatingViewModel>> GetRatingsAsync();
         Task<RatingViewModel> GetRatingByIdAsync(Guid ratingId);
+        Task<List<RatingViewModel>> GetRatingsByBookIdAsync(Guid bookId);
 
         Task<ApiResponse<RatingViewModel>> CreateRatingAsync(RatingViewModel ratingViewModel);
         Task<ApiResponse<RatingViewModel>> UpdateRatingAsync(Guid ratingId, RatingViewModel ratingViewModel);
