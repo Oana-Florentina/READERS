@@ -156,12 +156,13 @@ namespace Lunatic.Identity.Services {
 
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
-            var mail = new Mail {
+            var mail = new Mail
+            {
                 To = model.Email,
                 Subject = "Reset Password",
-                Body = $"Hacked by NASA here is the token: ?token={token}_{user.Id}"
+                Body = $"here is the token: ?token={token}_{user.Id}"
             };
-
+            Console.WriteLine($"here is the token: ?token={token}_{user.Id}");
             try {
                 await emailService.SendEmailAsync(mail);
             } catch(Exception exception) {

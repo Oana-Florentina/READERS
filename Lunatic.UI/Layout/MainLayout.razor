@@ -7,7 +7,7 @@
 @inherits LayoutComponentBase
 
 <div class="page">
-    @if (!IsLoginPage && !IsRegisterPage)
+    @if (!IsLoginPage && !IsRegisterPage && !IsForgotPassword)
     {
         <div class="sidebar">
             <NavMenu />
@@ -24,11 +24,12 @@
 @code {
     private bool IsLoginPage => navigationManager.Uri.EndsWith("/login", StringComparison.OrdinalIgnoreCase);
     private bool IsRegisterPage => navigationManager.Uri.EndsWith("/register", StringComparison.OrdinalIgnoreCase);
+    private bool IsForgotPassword => navigationManager.Uri.EndsWith("/forgotpassword", StringComparison.OrdinalIgnoreCase);
     protected override async Task OnInitializedAsync()
     {
         var token = await TokenService.GetTokenAsync();
         Console.WriteLine($"Token: {token}");
-        if (token == null && !IsLoginPage)
+        if (token == null && !IsLoginPage && !IsRegisterPage && !IsForgotPassword)
         {
             navigationManager.NavigateTo("/login");
         }
