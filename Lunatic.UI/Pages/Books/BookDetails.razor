@@ -51,14 +51,18 @@ else
             <ul class="ratings-list">
                 @foreach (var rating in Ratings)
                 {
-                    <li>
-                        <p><strong>Score:</strong> @rating.Score</p>
-                        <p><strong>Comment:</strong> @rating.CommentMessage</p>
+                    <li class="rating-item">
+                        <div class="rating-header">
+                            <p><strong>Username:</strong> @rating.Username</p>
+                            <p><strong>Score:</strong> @rating.Score /10 </p>
+                        </div>
+                        <p class="rating-comment"><strong>Comment:</strong> @rating.CommentMessage</p>
                     </li>
                 }
             </ul>
         }
     </div>
+
 }
 
 <!-- Modal for Adding to Read Books -->
@@ -171,9 +175,19 @@ else
             // Fetch ratings for the book
             Ratings = await RatingDataService.GetRatingsByBookIdAsync(bookId);
 
+            // Fetch usernames for the ratings
+            foreach (var rating in Ratings)
+            {
+                var user = await UserDataService.GetUserByIdAsync(rating.UserId);
+                rating.Username = user?.Username ?? "Unknown";
+            }
+
             // Fetch friends and map to FriendViewModel
             var friends = await UserDataService.GetFriendsByUserIdAsync(userId);
             FriendsList = friends.Select(f => new FriendViewModel(f.UserId, f.Username)).ToList();
+
+            // Calculate average score
+            Book.AverageScore = Ratings == null || !Ratings.Any() ? 0 : Ratings.Average(r => r.Score);
 
             Console.WriteLine($"BookId: {bookId}");
             Console.WriteLine($"cover: {Book?.Cover}");
@@ -192,6 +206,8 @@ else
             NavigationManager.NavigateTo("/404");
         }
     }
+
+
 
     private void OpenReadBooksModal()
     {

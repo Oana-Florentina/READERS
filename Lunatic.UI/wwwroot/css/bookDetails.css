@@ -140,3 +140,49 @@
         flex-direction: column;
     }
 }
+
+.ratings-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgba(255, 177, 177, 0.5);
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .ratings-section h4 {
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+        font-size: 1.5em;
+    }
+
+.ratings-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.rating-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #ffff;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.rating-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+    .rating-header p {
+        margin: 0;
+        font-weight: bold;
+        color: #555;
+    }
+
+.rating-comment {
+    margin: 0;
+    color: #777;
+    font-style: italic;
+}

@@ -93,14 +93,37 @@ namespace Lunatic.UI.Services
 
         public async Task<List<RatingViewModel>> GetRatingsByBookIdAsync(Guid bookId)
         {
-            var result = await httpClient.GetAsync($"{RequestUri}/{bookId}");
-            result.EnsureSuccessStatusCode();
-            var content = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
+          
+            var token = await tokenService.GetTokenAsync();
+            if (!string.IsNullOrEmpty(token))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            // Assume that the API accepts a list of GUIDs as a POST request to fetch book details by IDs
+            var response = await httpClient.GetAsync($"{RequestUri}/{bookId}");
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
             {
                 throw new ApplicationException(content);
             }
-            var ratings = JsonSerializer.Deserialize<List<RatingViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+
+           
+            var result = JsonSerializer.Deserialize<GetRatingsByBookIdResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            var ratings = result.Ratings
+                .Where(r => r.BookId == bookId)
+                .Select(r => new RatingViewModel
+                {
+                    RatingId = r.RatingId,
+                    BookId = r.BookId,
+                    UserId = r.UserId,
+                    Score = r.Score,
+                    CommentMessage = r.CommentMessage
+                }).ToList();
+
             return ratings!;
         }
     }

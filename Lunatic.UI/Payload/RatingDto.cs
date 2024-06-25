@@ -6,6 +6,6 @@
         public Guid BookId { get;  set; }
         public Guid UserId { get;  set; }
         public float Score { get;  set; }
-        public string CommentMessage { get;  set; }
+        public string ?CommentMessage { get;  set; }
     }
 }
