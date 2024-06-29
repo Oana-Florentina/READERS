@@ -19,6 +19,7 @@ namespace Lunatic.Domain.Entities
         public string Description { get; private set; }
         public List<Guid> Books { get; private set; } = new List<Guid>();
         public List<Guid> Members { get; private set; } = new List<Guid>();
+        public List<Guid> PostIds { get; private set; } = new List<Guid>();
 
         public void addMember(Guid userId)
         {
@@ -34,6 +35,10 @@ namespace Lunatic.Domain.Entities
         public void removeBook(Guid bookId)
         {
             Books.Remove(bookId);
+        }
+        public void AddPost(Guid postId)
+        {
+            PostIds.Add(postId);
         }
         public void Update(string title, string description, List<Guid> members, List<Guid> books)
         {
