@@ -74,7 +74,7 @@ namespace Lunatic.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{bookClubId}/post")]
+        [HttpPost("{bookClubId}/posts")]
         [Produces("application/json")]
         [ProducesResponseType<CreatePostCommandResponse>(StatusCodes.Status201Created)]
         [ProducesResponseType<CreatePostCommandResponse>(StatusCodes.Status400BadRequest)]

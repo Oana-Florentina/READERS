@@ -11,7 +11,7 @@ namespace Lunatic.Application.Features.BookClubs.Mapper
     public class PostMapper
     {
 
-        public static PostDto MapToPostDto(PostDto post)
+        public static PostDto MapToPostDto(Post post)
         {
             return new PostDto
             {

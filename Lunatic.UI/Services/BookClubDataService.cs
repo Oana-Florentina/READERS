@@ -82,6 +82,21 @@ namespace Lunatic.UI.Services
             return response!;
         }
 
+        public async Task<PostDto> CreatePost(PostViewModel post, Guid bookClubId)
+        {
+            var createPostResponse = await httpClient.PostAsJsonAsync($"api/v1/bookclub/{bookClubId}/posts", post);
+            createPostResponse.EnsureSuccessStatusCode();
+            var content = await createPostResponse.Content.ReadAsStringAsync();
+            var createdPost = JsonSerializer.Deserialize<CreatePostResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (createdPost == null)
+            {
+                throw new ApplicationException("Cannot create post");
+            }
+            return createdPost.Post!;
+        }
+
+       
+
 
     }
 }
