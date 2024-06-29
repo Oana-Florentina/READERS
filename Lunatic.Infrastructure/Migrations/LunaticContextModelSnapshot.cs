@@ -79,6 +79,10 @@ namespace Lunatic.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("uuid[]");
 
+                    b.Property<List<Guid>>("PostIds")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
@@ -150,6 +154,30 @@ namespace Lunatic.Infrastructure.Migrations
                     b.HasKey("FriendRequestId");
 
                     b.ToTable("FriendRequest");
+                });
+
+            modelBuilder.Entity("Lunatic.Domain.Entities.Post", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookClubId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PostId");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Lunatic.Domain.Entities.Project", b =>

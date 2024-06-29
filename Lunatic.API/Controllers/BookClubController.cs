@@ -1,9 +1,11 @@
 ﻿using Lunatic.Application.Features.BookClubs.Commands;
+using Lunatic.Application.Features.BookClubs.Commands.CreatePost;
 using Lunatic.Application.Features.BookClubs.Commands.Update;
 using Lunatic.Application.Features.BookClubs.Queries.GetAll;
 using Lunatic.Application.Features.BookClubs.Queries.GetById;
 using Lunatic.Application.Features.Books.Queries.GetAll;
 using Lunatic.Application.Features.Books.Queries.GetById;
+using Lunatic.Application.Features.Users.Commands.AddFavorite;
 using Lunatic.Application.Features.Users.Commands.CreateUser;
 using Lunatic.Application.Features.Users.Commands.UpdateUser;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +73,29 @@ namespace Lunatic.API.Controllers
             }
             return Ok(result);
         }
+
+        [HttpPost("{bookClubId}/post")]
+        [Produces("application/json")]
+        [ProducesResponseType<CreatePostCommandResponse>(StatusCodes.Status201Created)]
+        [ProducesResponseType<CreatePostCommandResponse>(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AddFavorite(Guid bookClubId, CreatePostCommand command)
+        {
+            if (bookClubId != command.BookClubId)
+            {
+                return BadRequest(new AddFavoriteCommandResponse
+                {
+                    Success = false,
+                    ValidationErrors = new List<string> { "The bookClub Id Path and bookClub Id Body must be equal." }
+                });
+            }
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
+
 
     }
 }

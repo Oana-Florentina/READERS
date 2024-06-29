@@ -20,7 +20,8 @@ namespace Lunatic.Infrastructure.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Books = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
-                    Members = table.Column<List<Guid>>(type: "uuid[]", nullable: false)
+                    Members = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
+                    PostIds = table.Column<List<Guid>>(type: "uuid[]", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -86,6 +87,21 @@ namespace Lunatic.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FriendRequest", x => x.FriendRequestId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Posts",
+                columns: table => new
+                {
+                    PostId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    BookClubId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Text = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Posts", x => x.PostId);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,6 +216,9 @@ namespace Lunatic.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "FriendRequest");
+
+            migrationBuilder.DropTable(
+                name: "Posts");
 
             migrationBuilder.DropTable(
                 name: "Projects");

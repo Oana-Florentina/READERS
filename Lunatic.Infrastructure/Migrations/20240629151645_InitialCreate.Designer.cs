@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lunatic.Infrastructure.Migrations
 {
     [DbContext(typeof(LunaticContext))]
-    [Migration("20240621220158_InitialCreate")]
+    [Migration("20240629151645_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -79,6 +79,10 @@ namespace Lunatic.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<List<Guid>>("Members")
+                        .IsRequired()
+                        .HasColumnType("uuid[]");
+
+                    b.Property<List<Guid>>("PostIds")
                         .IsRequired()
                         .HasColumnType("uuid[]");
 
@@ -153,6 +157,30 @@ namespace Lunatic.Infrastructure.Migrations
                     b.HasKey("FriendRequestId");
 
                     b.ToTable("FriendRequest");
+                });
+
+            modelBuilder.Entity("Lunatic.Domain.Entities.Post", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookClubId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("PostId");
+
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Lunatic.Domain.Entities.Project", b =>
